@@ -1,0 +1,2230 @@
+00000000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.15.04
+Created On: 3/16/2016 11:19:02 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  *   Register Assignments
+00000000                             3  *   D0
+00000000                             4  *   D1
+00000000                             5  *   D2  
+00000000                             6  *   D3  Word operation read in from memory
+00000000                             7  *   D4  Output Counter (number of lines printed,)
+00000000                             8  *   D5  Masked op-code (original op-code with a mask applied)
+00000000                             9  *   D6 
+00000000                            10  *   D7   
+00000000                            11  *   A0  
+00000000                            12  *   A1  String to append to display buffer
+00000000                            13  *   A2
+00000000                            14  *   A3
+00000000                            15  *   A4  Last address
+00000000                            16  *   A5  Pointer to next byte after last byte in string
+00000000                            17  *   A6  Pointer to current word-op
+00000000                            18  *   A7  Stack
+00000000                            19  *   
+00000000                            20  *   Memory Assignments
+00000000                            21  *   7500 - 8000: Stack Pointer
+00000000                            22  *   7400: Start of String Pointer (display buffer)
+00000000                            23  *-----------------------------------------------------------
+00000000  =00007000                 24  BEGIN               EQU    $7000
+00000000  =00007100                 25  END                 EQU    $7100
+00000000  =00003600                 26  DUKE_EA_FUNCTION    EQU    $3600
+00000000                            27  
+00000000                            28      ; Fake instructions that will be generated, and then disassembled
+00007000                            29      ORG    BEGIN
+00007000  4E71                      30      NOP
+00007002  48A7 A81C                 31      MOVEM.W     A3/A4/A5/D0/D2/D4,-(SP)
+00007006  4895 3815                 32      MOVEM.W     A3/A4/A5/D0/D2/D4,(A5)
+0000700A  DE43                      33      ADD.W       D3,D7
+0000700C  D693                      34      ADD.L       (A3),D3
+0000700E  D138 1000                 35      ADD.B       D0,$1000
+00007012  DCFC F00F                 36      ADDA.W      #$F00F,A6
+00007016  D3C0                      37      ADD.L       D0,A1
+00007018  5A43                      38      ADDQ        #5,D3
+0000701A  5E79 12340FF0             39      ADDQ        #7,$12340FF0
+00007020  C253                      40      AND         (A3),D1
+00007022  C951                      41      AND         D4,(A1)
+00007024  E745                      42      ASL.W       #3,D5
+00007026  E121                      43      ASL.B       D0,D1
+00007028  E287                      44      ASR.L       #1,D7
+0000702A  E2A0                      45      ASR.L       D1,D0
+0000702C  E1F8 1234                 46      ASL         $1234
+00007030  E0F9 87654321             47      ASR         $87654321
+00007036  6400 0066                 48      BCC         ZZZZZZZ_END
+0000703A  6900 0062                 49      BVS         ZZZZZZZ_END
+0000703E  0757                      50      BCHG        D3,(A7)
+00007040  0878 0010 4444            51      BCHG        #16,$4444
+00007046  B27C 00A0                 52      CMP         #$A0,D1
+0000704A  B845                      53      CMP         D5,D4
+0000704C  B6FC FFFF                 54      CMPA.W      #$FFFF,A3
+00007050  BFCC                      55      CMPA.L      A4,A7
+00007052  0C03 0012                 56      CMPI.B      #$12,D3
+00007056  0C57 3456                 57      CMPI.W      #$3456,(A7)
+0000705A  0CB9 10205031 00F03050    58      CMPI.L      #$10205031,$00F03050
+00007064  81FC 0015                 59      DIVS        #$15,D0
+00007068  89F8 40AF                 60      DIVS        $40AF,D4
+0000706C  B153                      61      EOR         D0,(A3)
+0000706E  0A45 007E                 62      EORI        #126,D5
+00007072  4EB8 4015                 63      JSR         $4015
+00007076  EE88                      64      LSR.L       #7,D0
+00007078  E909                      65      LSL.B       #4,D1
+0000707A  E66C                      66      LSR         D3,D4
+0000707C  E96B                      67      LSL         D4,D3
+0000707E  E2F8 4000                 68      LSR.W       $4000
+00007082  E3F8 4002                 69      LSL.W       $4002
+00007086  1005                      70      MOVE.B      D5,D0
+00007088  1C17                      71      MOVE.B      (A7),D6
+0000708A  3C40                      72      MOVEA.W     D0,A6
+0000708C  300E                      73      MOVE.W      A6,D0
+0000708E  1200                      74      MOVE.B      D0,D1
+00007090  2041                      75      MOVEA.L     D1,A0
+00007092  43F8 1052                 76      LEA         $1052,A1
+00007096  4280                      77      CLR.L       D0
+00007098  4202                      78      CLR.B       D2
+0000709A  3C40                      79      MOVEA.W     D0,A6
+0000709C  2041                      80      MOVEA.L     D1,A0
+0000709E                            81  ZZZZZZZ_END
+0000709E  4E71                      82      NOP
+000070A0                            83      
+000070A0                            84      ; 
+000070A0                            85  
+00002000                            86      ORG    $2000
+00002000                            87  ;START:                  ; first instruction of program
+00002000  4280                      88          CLR.L   D0
+00002002  4281                      89          CLR.L   D1
+00002004  4282                      90          CLR.L   D2
+00002006  4283                      91          CLR.L   D3
+00002008  4284                      92          CLR.L   D4
+0000200A  4285                      93          CLR.L   D5
+0000200C  4286                      94          CLR.L   D6
+0000200E  4287                      95          CLR.L   D7
+00002010                            96          
+00002010                            97          ; MOVEA.L #$00004000,SP
+00002010                            98          ;MOVEA.W #BEGIN,A6
+00002010                            99          ;MOVEA.W #END,A4
+00002010  2A7C 000033B5            100          MOVEA.L #STRING_PTR,A5
+00002016                           101  
+00002016                           102  ; Begin examining op-code ID
+00002016  361E                     103  LOOP    MOVE.W  (A6)+,D3    ; Load word-op to disassemble
+00002018  3A03                     104          MOVE.W  D3,D5       ; Copy to another location so it's safe to modify
+0000201A  0245 F000                105          ANDI.W  #$F000,D5   ; bitmask it for the last 4 bits (op-code ID)
+0000201E                           106          
+0000201E  0C45 0000                107          CMPI    #$0,D5
+00002022  6700 006E                108          BEQ     OP_ID_0
+00002026                           109          
+00002026  0C45 1000                110          CMPI    #$1000,D5
+0000202A  6700 00A0                111          BEQ     OP_ID_1
+0000202E                           112          
+0000202E  0C45 2000                113          CMPI    #$2000,D5
+00002032  6700 009C                114          BEQ     OP_ID_2
+00002036                           115          
+00002036  0C45 3000                116          CMPI    #$3000,D5
+0000203A  6700 00A6                117          BEQ     OP_ID_3
+0000203E                           118          
+0000203E  0C45 4000                119          CMPI    #$4000,D5
+00002042  6700 00B0                120          BEQ     OP_ID_4
+00002046                           121                  
+00002046  0C45 5000                122          CMPI    #$5000,D5
+0000204A  6700 00F2                123          BEQ     OP_ID_5
+0000204E                           124                  
+0000204E  0C45 6000                125          CMPI    #$6000,D5
+00002052  6700 00EE                126          BEQ     OP_ID_6
+00002056                           127                  
+00002056  0C45 7000                128          CMPI    #$7000,D5
+0000205A  6700 0110                129          BEQ     OP_ID_7
+0000205E                           130                  
+0000205E  0C45 8000                131          CMPI    #$8000,D5
+00002062  6700 010C                132          BEQ     OP_ID_8
+00002066                           133                  
+00002066  0C45 9000                134          CMPI    #$9000,D5
+0000206A  6700 0108                135          BEQ     OP_ID_9
+0000206E                           136                  
+0000206E  0C45 B000                137          CMPI    #$B000,D5
+00002072  6700 0112                138          BEQ     OP_ID_B
+00002076                           139                  
+00002076  0C45 C000                140          CMPI    #$C000,D5
+0000207A  6700 0124                141          BEQ     OP_ID_C
+0000207E                           142                  
+0000207E  0C45 D000                143          CMPI    #$D000,D5
+00002082  6700 012E                144          BEQ     OP_ID_D
+00002086                           145                  
+00002086  0C45 E000                146          CMPI    #$E000,D5
+0000208A  6700 0138                147          BEQ     OP_ID_E
+0000208E                           148          
+0000208E  6000 102E                149          BRA     BAD_INPUT
+00002092                           150          
+00002092                           151  ; End ID cases
+00002092                           152          
+00002092                           153  OP_ID_0
+00002092  0803 0008                154          BTST.L  #$08,D3
+00002096  6600 061C                155          BNE     OP_BCHG
+0000209A                           156          
+0000209A  3A03                     157          MOVE.W  D3,D5
+0000209C  0245 0E00                158          ANDI.W  #$0E00,D5
+000020A0  0C45 0200                159          CMPI.W  #$0200,D5
+000020A4  6700 040A                160          BEQ     OP_ANDI
+000020A8                           161          
+000020A8  0C45 0800                162          CMPI.W  #$0800,D5
+000020AC  6700 0652                163          BEQ     OP_BCHGI
+000020B0                           164          
+000020B0  0C45 0C00                165          CMPI.W  #$0C00,D5
+000020B4  6700 079A                166          BEQ     OP_CMPI
+000020B8                           167          
+000020B8  0C45 0A00                168          CMPI.W  #$0A00,D5
+000020BC  6700 08A6                169          BEQ     OP_EORI
+000020C0                           170          
+000020C0  0C45 0600                171          CMPI.W  #$0600,D5
+000020C4  6700 028A                172          BEQ     OP_ADDI
+000020C8                           173          
+000020C8  6000 0F9A                174          BRA     OP_SUBI
+000020CC                           175  
+000020CC                           176  OP_ID_1 
+000020CC  6000 0B3C                177          BRA     OP_MOVEB
+000020D0                           178  
+000020D0                           179  OP_ID_2
+000020D0  3A03                     180          MOVE.W  D3,D5
+000020D2  0245 01C0                181          ANDI.W  #$01C0,D5
+000020D6  0C45 0040                182          CMPI.W  #$0040,D5
+000020DA  6700 0AB2                183          BEQ     OP_MOVEAL
+000020DE  6000 0B74                184          BRA     OP_MOVEL
+000020E2                           185  
+000020E2                           186  OP_ID_3
+000020E2  3A03                     187          MOVE.W  D3,D5
+000020E4  0245 01C0                188          ANDI.W  #$01C0,D5
+000020E8  0C45 0040                189          CMPI.W  #$0040,D5
+000020EC  6700 0ADE                190          BEQ     OP_MOVEAW
+000020F0  6000 0B9E                191          BRA     OP_MOVEW
+000020F4                           192  
+000020F4                           193  OP_ID_4
+000020F4  0803 0008                194          BTST.L  #$08,D3     ; compare the 8th bit in the op-code to 0
+000020F8  6600 090A                195          BNE     OP_LEA      ; if it's a 1, it's a LEA op-code
+000020FC                           196          
+000020FC  0803 000B                197          BTST.L  #11,D3      ; compare the 11th bit to 0
+00002100  6700 065A                198          BEQ     OP_CLR      ; if it's a 0, it's a CLR op-code
+00002104                           199          
+00002104  3A03                     200          MOVE.W  D3,D5
+00002106  0245 07C0                201          ANDI.W  #$07C0,D5
+0000210A  0C45 0680                202          CMPI.W  #$0680,D5
+0000210E  6700 08C2                203          BEQ     OP_JSR
+00002112                           204          
+00002112  0C45 0080                205          CMPI.W  #$0080,D5
+00002116  6700 0BB4                206          BEQ     OP_MOVEMW_FROM
+0000211A                           207          
+0000211A  0C45 00C0                208          CMPI.W  #$00C0,D5
+0000211E  6700 0C04                209          BEQ     OP_MOVEML_FROM
+00002122                           210          
+00002122  0C45 0480                211          CMPI.W  #$0480,D5
+00002126  6700 0C3E                212          BEQ     OP_MOVEMW_TO
+0000212A                           213          
+0000212A  0C45 04C0                214          CMPI.W  #$04C0,D5
+0000212E  6700 0C8E                215          BEQ     OP_MOVEML_TO
+00002132                           216          
+00002132  0C43 4E71                217          CMPI.W  #$4E71,D3
+00002136  6700 0D52                218          BEQ     OP_NOP
+0000213A                           219          
+0000213A  6000 0E22                220          BRA     OP_RTS
+0000213E                           221  
+0000213E                           222  OP_ID_5
+0000213E  6000 0290                223          BRA     OP_ADDQ
+00002142                           224  
+00002142                           225  OP_ID_6 
+00002142  3A03                     226          MOVE.W  D3,D5
+00002144  0245 0F00                227          ANDI.W  #$0F00,D5
+00002148  0C45 0400                228          CMPI.W  #$0400,D5
+0000214C  6700 04E6                229          BEQ     OP_BCC
+00002150                           230          
+00002150  0C45 0E00                231          CMPI.W  #$0E00,D5
+00002154  6700 0522                232          BEQ     OP_BGT
+00002158                           233          
+00002158  0C45 0F00                234          CMPI.W  #$0F00,D5
+0000215C  6700 052E                235          BEQ     OP_BLE
+00002160                           236          
+00002160  0C45 0100                237          CMPI.W  #$0100,D5
+00002164  6700 05E0                238          BEQ     OP_BSR
+00002168                           239          
+00002168  6000 0536                240          BRA     OP_BVS
+0000216C                           241          
+0000216C                           242  OP_ID_7
+0000216C  6000 0C90                243          BRA     OP_MOVEQ
+00002170                           244  
+00002170                           245  OP_ID_8
+00002170  6000 0746                246          BRA     OP_DIVSW
+00002174                           247  
+00002174                           248  OP_ID_9
+00002174  3A03                     249          MOVE.W  D3,D5
+00002176  0245 00C0                250          ANDI.W  #$00C0,D5
+0000217A  0C45 00C0                251          CMPI.W  #$00C0,D5
+0000217E  6700 0E88                252          BEQ     OP_SUBA
+00002182  6000 0DFA                253          BRA     OP_SUB
+00002186                           254  
+00002186                           255  OP_ID_B 
+00002186  3A03                     256          MOVE.W  D3,D5
+00002188  0245 00C0                257          ANDI.W  #$00C0,D5
+0000218C  0C45 00C0                258          CMPI.W  #$00C0,D5
+00002190  6700 0660                259          BEQ     OP_CMPA
+00002194                           260          
+00002194  0803 0008                261          BTST.L  #8,D3
+00002198  6700 0608                262          BEQ     OP_CMP
+0000219C  6000 0766                263          BRA     OP_EOR
+000021A0                           264  
+000021A0                           265  OP_ID_C 
+000021A0  3A03                     266          MOVE.W  D3,D5
+000021A2  0245 00C0                267          ANDI.W  #$00C0,D5
+000021A6  0C45 00C0                268          CMPI.W  #$00C0,D5
+000021AA  6700 0CA0                269          BEQ     OP_MULS
+000021AE  6000 027A                270          BRA     OP_AND
+000021B2                           271  
+000021B2                           272  OP_ID_D
+000021B2  3A03                     273          MOVE.W  D3,D5
+000021B4  0245 00C0                274          ANDI.W  #$00C0,D5
+000021B8  0C45 00C0                275          CMPI.W  #$00C0,D5
+000021BC  6700 012A                276          BEQ     OP_ADDA
+000021C0  6000 00A0                277          BRA     OP_ADD
+000021C4                           278  
+000021C4                           279  OP_ID_E 
+000021C4  3A03                     280          MOVE.W  D3,D5
+000021C6  0245 00C0                281          ANDI.W  #$00C0,D5
+000021CA  0C45 00C0                282          CMPI.W  #$00C0,D5
+000021CE  6700 0034                283          BEQ     OP_ID_E_PART2
+000021D2                           284          
+000021D2  3A03                     285          MOVE.W  D3,D5
+000021D4  0245 0038                286          ANDI.W  #$0038,D5
+000021D8  0C45 0000                287          CMPI.W  #$0000,D5
+000021DC  6700 03BA                288          BEQ     OP_ASD_I
+000021E0                           289          
+000021E0  0C45 0008                290          CMPI.W  #$0008,D5
+000021E4  6700 08CE                291          BEQ     OP_LSD_I
+000021E8                           292          
+000021E8  0C45 0018                293          CMPI.W  #$0018,D5
+000021EC  6700 0D12                294          BEQ     OP_ROD_I
+000021F0                           295          
+000021F0  0C45 0020                296          CMPI.W  #$0020,D5
+000021F4  6700 0340                297          BEQ     OP_ASD_D
+000021F8                           298          
+000021F8  0C45 0028                299          CMPI.W  #$0028,D5
+000021FC  6700 0856                300          BEQ     OP_LSD_D
+00002200                           301          
+00002200  6000 0C9E                302          BRA     OP_ROD_D
+00002204                           303          
+00002204                           304  OP_ID_E_PART2
+00002204  0803 0009                305          BTST.L  #09,D3
+00002208  6700 03F0                306          BEQ     OP_ASD_EA
+0000220C  6000 0904                307          BRA     OP_LSD_EA
+00002210                           308  
+00002210                           309  ; Print out code.
+00002210                           310  LOOP_END
+00002210  0C07 00FF                311          CMPI.B  #$FF,D7
+00002214  6700 002A                312          BEQ     LOOP_END_BAD_INPUT
+00002218                           313          
+00002218                           314  LOOP_END_2
+00002218  1ABC 0000                315          MOVE.B  #0,(A5)
+0000221C  227C 000033B5            316          MOVEA.L #STRING_PTR,A1
+00002222  700D                     317          MOVE.L  #13,D0
+00002224  4E4F                     318          TRAP    #15
+00002226                           319          
+00002226  2A7C 000033B5            320          MOVEA.L #STRING_PTR,A5
+0000222C  5204                     321          ADDQ.B  #1,D4 ; Increment output counter
+0000222E                           322          
+0000222E  BDCC                     323          CMPA.L  A4,A6
+00002230  6C00 100A                324          BGE     Z_END
+00002234                           325          
+00002234  B83C 001E                326          CMP.B   #30,D4
+00002238  6700 0010                327          BEQ     QUERY_CONTINUE
+0000223C                           328                  
+0000223C  6000 FDD8                329          BRA     LOOP
+00002240                           330          
+00002240                           331  LOOP_END_BAD_INPUT
+00002240  2A7C 000033B5            332          MOVEA.L #STRING_PTR,A5
+00002246  6000 0E76                333          BRA     BAD_INPUT
+0000224A                           334          
+0000224A                           335  QUERY_CONTINUE
+0000224A  183C 0000                336          MOVE.B  #0,D4
+0000224E  43F9 00003394            337          LEA     TXT_QUERY,A1
+00002254  700E                     338          MOVE.L  #14,D0
+00002256  4E4F                     339          TRAP    #15
+00002258                           340          
+00002258  103C 0005                341          MOVE.B  #5,D0
+0000225C  4E4F                     342          TRAP    #15
+0000225E  6000 FDB6                343          BRA     LOOP
+00002262                           344  
+00002262                           345  ;----------------------------------------------------------------------
+00002262                           346  ; Op-Code Processing Labels (Alphabetical Order)
+00002262                           347  ;----------------------------------------------------------------------
+00002262                           348  OP_ADD
+00002262                           349          ; Verify
+00002262  3A03                     350          MOVE.W  D3,D5
+00002264  0245 00C0                351          ANDI.W  #$00C0,D5 ; Unknown size '11'
+00002268  0C45 00C0                352          CMPI.W  #$00C0,D5
+0000226C  6700 0E50                353          BEQ     BAD_INPUT
+00002270                           354          
+00002270  4EB9 000030E4            355          JSR     PRINT_ADDRESS
+00002276  43F9 00003247            356          LEA     TXT_OP_ADD,A1
+0000227C  4EB9 0000315C            357          JSR     APPEND_STRING
+00002282  4EB9 00003166            358          JSR     PRINT_SIZE
+00002288                           359          
+00002288  0803 0008                360          BTST.L  #8,D3
+0000228C  6700 002E                361          BEQ     OP_ADD_DEST
+00002290                           362          
+00002290                           363  OP_ADD_SOURCE
+00002290                           364          ; ADD Dn,<ea>
+00002290  1AFC 0044                365          MOVE.B  #'D',(A5)+
+00002294  3A03                     366          MOVE.W  D3,D5
+00002296  0245 0E00                367          ANDI.W  #$0E00,D5
+0000229A  303C 0009                368          MOVE.W  #9,D0
+0000229E  E06D                     369          LSR.W   D0,D5
+000022A0  0605 0030                370          ADD.B   #$30,D5
+000022A4  1AC5                     371          MOVE.B  D5,(A5)+
+000022A6                           372          
+000022A6  1AFC 002C                373          MOVE.B  #',',(A5)+
+000022AA                           374          
+000022AA  3A03                     375          MOVE.W  D3,D5
+000022AC  1C3C 0001                376          MOVE.B  #1,D6
+000022B0  0245 003F                377          ANDI.W  #$003F,D5
+000022B4  4EB8 3600                378          JSR     DUKE_EA_FUNCTION
+000022B8                           379          
+000022B8  6000 FF56                380          BRA     LOOP_END
+000022BC                           381          
+000022BC                           382  OP_ADD_DEST
+000022BC                           383          ; ADD <ea>,Dn
+000022BC  3A03                     384          MOVE.W  D3,D5
+000022BE  1C3C 0001                385          MOVE.B  #1,D6
+000022C2  0245 003F                386          ANDI.W  #$003F,D5
+000022C6  4EB8 3600                387          JSR     DUKE_EA_FUNCTION
+000022CA                           388          
+000022CA  1AFC 002C                389          MOVE.B  #',',(A5)+
+000022CE                           390          
+000022CE  1AFC 0044                391          MOVE.B  #'D',(A5)+
+000022D2  3A03                     392          MOVE.W  D3,D5
+000022D4  0245 0E00                393          ANDI.W  #$0E00,D5
+000022D8  303C 0009                394          MOVE.W  #9,D0
+000022DC  E06D                     395          LSR.W   D0,D5
+000022DE  0605 0030                396          ADD.B   #$30,D5
+000022E2  1AC5                     397          MOVE.B  D5,(A5)+
+000022E4                           398          
+000022E4  6000 FF2A                399          BRA     LOOP_END
+000022E8                           400          
+000022E8                           401  OP_ADDA
+000022E8                           402          ; Verify
+000022E8  3A03                     403          MOVE.W  D3,D5
+000022EA  0245 00C0                404          ANDI.W  #$00C0,D5 ; Size must be 11
+000022EE  0C45 00C0                405          CMPI.W  #$00C0,D5
+000022F2  6600 0DCA                406          BNE     BAD_INPUT
+000022F6                           407          
+000022F6  4EB9 000030E4            408          JSR     PRINT_ADDRESS
+000022FC  43F9 0000324C            409          LEA     TXT_OP_ADDA,A1
+00002302  4EB9 0000315C            410          JSR     APPEND_STRING
+00002308                           411          
+00002308  0803 0008                412          BTST.L  #8,D3
+0000230C  6700 000C                413          BEQ     OP_ADDAW
+00002310                           414          
+00002310  1AFC 004C                415          MOVE.B  #'L',(A5)+
+00002314  7E10                     416          MOVE.L  #$10,D7
+00002316  6000 0008                417          BRA     OP_ADDA_END
+0000231A                           418          
+0000231A                           419  OP_ADDAW
+0000231A  1AFC 0057                420          MOVE.B  #'W',(A5)+
+0000231E  4287                     421          CLR.L   D7
+00002320                           422          
+00002320                           423  OP_ADDA_END
+00002320  1AFC 0020                424          MOVE.B  #' ',(A5)+
+00002324                           425          
+00002324  3A03                     426          MOVE.W  D3,D5
+00002326  1C3C 0001                427          MOVE.B  #1,D6
+0000232A  0245 003F                428          ANDI.W  #$003F,D5
+0000232E  4EB8 3600                429          JSR     DUKE_EA_FUNCTION
+00002332                           430          
+00002332  1AFC 002C                431          MOVE.B  #',',(A5)+
+00002336                           432          
+00002336  1AFC 0041                433          MOVE.B  #'A',(A5)+
+0000233A  3A03                     434          MOVE.W  D3,D5
+0000233C  0245 0E00                435          ANDI.W  #$0E00,D5
+00002340  103C 0009                436          MOVE.B  #9,D0
+00002344  E06D                     437          LSR.W   D0,D5
+00002346  0645 0030                438          ADD.W   #$30,D5
+0000234A  1AC5                     439          MOVE.B  D5,(A5)+
+0000234C                           440          
+0000234C  6000 FEC2                441          BRA     LOOP_END
+00002350                           442          
+00002350                           443  OP_ADDI
+00002350  3A03                     444          MOVE.W  D3,D5
+00002352  0245 FF00                445          ANDI.W  #$FF00,D5
+00002356  0C45 0600                446          CMPI.W  #$0600,D5
+0000235A  6600 0D62                447          BNE     BAD_INPUT
+0000235E                           448          
+0000235E  3A03                     449          MOVE.W  D3,D5
+00002360  0245 00C0                450          ANDI.W  #$00C0,D5
+00002364  0C45 00C0                451          CMPI.W  #$00C0,D5
+00002368  6700 0D54                452          BEQ     BAD_INPUT
+0000236C                           453          
+0000236C  4EB9 000030E4            454          JSR     PRINT_ADDRESS
+00002372  43F9 00003252            455          LEA     TXT_OP_ADDI,A1
+00002378  4EB9 0000315C            456          JSR     APPEND_STRING
+0000237E  4EB9 00003166            457          JSR     PRINT_SIZE
+00002384                           458          
+00002384  1AFC 0023                459          MOVE.B  #'#',(A5)+
+00002388  1AFC 0024                460          MOVE.B  #'$',(A5)+
+0000238C  0C45 0080                461          CMPI.W  #$0080,D5
+00002390  6700 0020                462          BEQ     OP_ADDI_L
+00002394                           463          
+00002394  301E                     464          MOVE.W  (A6)+,D0
+00002396                           465          
+00002396  0C45 0040                466          CMPI.W  #$0040,D5
+0000239A  6700 000C                467          BEQ     OP_ADDI_W
+0000239E                           468          
+0000239E                           469  OP_ADDI_B
+0000239E  4EB9 00003108            470          JSR     PRINT_HEX_BYTE
+000023A4  6000 0016                471          BRA     OP_ADDI_END
+000023A8                           472          
+000023A8                           473  OP_ADDI_W
+000023A8  4EB9 00003138            474          JSR     PRINT_HEX_WORD
+000023AE  6000 000C                475          BRA     OP_ADDI_END
+000023B2                           476          
+000023B2                           477  OP_ADDI_L
+000023B2  201E                     478          MOVE.L  (A6)+,D0
+000023B4  4EB9 0000314A            479          JSR     PRINT_HEX_LONG
+000023BA  7E10                     480          MOVE.L  #$10,D7
+000023BC                           481          
+000023BC                           482  OP_ADDI_END
+000023BC  1AFC 002C                483          MOVE.B  #',',(A5)+
+000023C0  3A03                     484          MOVE.W  D3,D5
+000023C2  0245 003F                485          ANDI.W  #$003F,D5
+000023C6  7C01                     486          MOVE.L  #1,D6
+000023C8  4EB8 3600                487          JSR     DUKE_EA_FUNCTION
+000023CC                           488          
+000023CC  6000 FE42                489          BRA     LOOP_END
+000023D0                           490          
+000023D0                           491  OP_ADDQ
+000023D0  3A03                     492          MOVE.W  D3,D5
+000023D2  0245 00C0                493          ANDI.W  #$00C0,D5
+000023D6  0C45 00C0                494          CMPI.W  #$00C0,D5
+000023DA  6700 0CE2                495          BEQ     BAD_INPUT
+000023DE                           496          
+000023DE  4EB9 000030E4            497          JSR     PRINT_ADDRESS
+000023E4  43F9 00003258            498          LEA     TXT_OP_ADDQ,A1
+000023EA  4EB9 0000315C            499          JSR     APPEND_STRING
+000023F0  4EB9 00003166            500          JSR     PRINT_SIZE
+000023F6                           501          
+000023F6  1AFC 0023                502          MOVE.B  #'#',(A5)+
+000023FA  3A03                     503          MOVE.W  D3,D5
+000023FC  0245 0E00                504          ANDI.W  #$0E00,D5
+00002400  103C 0009                505          MOVE.B  #9,D0
+00002404  E06D                     506          LSR.W   D0,D5
+00002406  0605 0030                507          ADDI.B  #$30,D5
+0000240A  1AC5                     508          MOVE.B  D5,(A5)+
+0000240C                           509          
+0000240C  1AFC 002C                510          MOVE.B  #',',(A5)+
+00002410                           511          
+00002410  3A03                     512          MOVE.W  D3,D5
+00002412  1C3C 0001                513          MOVE.B  #1,D6
+00002416  0245 003F                514          ANDI.W  #$003F,D5
+0000241A  3E03                     515          MOVE.W  D3,D7
+0000241C  0247 01C0                516          ANDI.W  #$01C0,D7
+00002420  EC4F                     517          LSR.W   #6,D7
+00002422  4EB8 3600                518          JSR     DUKE_EA_FUNCTION
+00002426                           519          
+00002426  6000 FDE8                520          BRA     LOOP_END
+0000242A                           521          
+0000242A                           522  OP_AND
+0000242A  3A03                     523          MOVE.W  D3,D5
+0000242C  0245 00C0                524          ANDI.W  #$00C0,D5
+00002430  0C45 00C0                525          CMPI.W  #$00C0,D5
+00002434  6700 0C88                526          BEQ     BAD_INPUT ; Size '11' illegal
+00002438                           527          
+00002438  4EB9 000030E4            528          JSR     PRINT_ADDRESS
+0000243E  43F9 0000325E            529          LEA     TXT_OP_AND,A1
+00002444  4EB9 0000315C            530          JSR     APPEND_STRING
+0000244A  4EB9 00003166            531          JSR     PRINT_SIZE
+00002450                           532          
+00002450                           533          ; Move Data Register ASCII value into D0
+00002450  3003                     534          MOVE    D3,D0
+00002452  0240 0E00                535          ANDI.W  #$0E00,D0
+00002456  323C 0009                536          MOVE.W  #9,D1
+0000245A  E268                     537          LSR.W   D1,D0
+0000245C  0640 0030                538          ADD.W   #$30,D0
+00002460                           539          
+00002460  0803 0008                540          BTST.L  #8,D3
+00002464  6700 0026                541          BEQ     OP_AND_DEST
+00002468                           542          
+00002468                           543  OP_AND_SOURCE
+00002468  1AFC 0044                544          MOVE.B  #'D',(A5)+
+0000246C  1AC0                     545          MOVE.B  D0,(A5)+
+0000246E  1AFC 002C                546          MOVE.B  #',',(A5)+
+00002472                           547          
+00002472  3A03                     548          MOVE.W  D3,D5
+00002474  1C3C 0001                549          MOVE.B  #1,D6
+00002478  0245 003F                550          ANDI.W  #$003F,D5
+0000247C  3E03                     551          MOVE.W  D3,D7
+0000247E  0247 01C0                552          ANDI.W  #$01C0,D7
+00002482  EC4F                     553          LSR.W   #6,D7
+00002484  4EB8 3600                554          JSR     DUKE_EA_FUNCTION
+00002488                           555          
+00002488  6000 FD86                556          BRA     LOOP_END
+0000248C                           557          
+0000248C                           558  OP_AND_DEST
+0000248C  3A03                     559          MOVE.W  D3,D5
+0000248E  1C3C 0001                560          MOVE.B  #1,D6
+00002492  0245 003F                561          ANDI.W  #$003F,D5
+00002496  3E03                     562          MOVE.W  D3,D7
+00002498  0247 01C0                563          ANDI.W  #$01C0,D7
+0000249C  EC4F                     564          LSR.W   #6,D7
+0000249E  4EB8 3600                565          JSR     DUKE_EA_FUNCTION
+000024A2                           566          
+000024A2  1AFC 002C                567          MOVE.B  #',',(A5)+
+000024A6  1AFC 0044                568          MOVE.B  #'D',(A5)+
+000024AA  1AC0                     569          MOVE.B  D0,(A5)+
+000024AC                           570          
+000024AC  6000 FD62                571          BRA     LOOP_END
+000024B0                           572          
+000024B0                           573  OP_ANDI
+000024B0  3A03                     574          MOVE.W  D3,D5
+000024B2  0245 FF00                575          ANDI.W  #$FF00,D5
+000024B6  0C45 0200                576          CMPI.W  #$0200,D5
+000024BA  6600 0C02                577          BNE     BAD_INPUT
+000024BE                           578          
+000024BE  3A03                     579          MOVE.W  D3,D5
+000024C0  0245 00C0                580          ANDI.W  #$00C0,D5
+000024C4  0C45 00C0                581          CMPI.W  #$00C0,D5
+000024C8  6700 0BF4                582          BEQ     BAD_INPUT
+000024CC                           583          
+000024CC  4EB9 000030E4            584          JSR     PRINT_ADDRESS
+000024D2  43F9 00003263            585          LEA     TXT_OP_ANDI,A1
+000024D8  4EB9 0000315C            586          JSR     APPEND_STRING
+000024DE  4EB9 00003166            587          JSR     PRINT_SIZE
+000024E4  1AFC 0023                588          MOVE.B  #'#',(A5)+
+000024E8  1AFC 0024                589          MOVE.B  #'$',(A5)+
+000024EC                           590          
+000024EC  0C45 0080                591          CMPI.W  #$0080,D5
+000024F0  6700 0012                592          BEQ     OP_ANDI_L
+000024F4                           593          
+000024F4  301E                     594          MOVE.W  (A6)+,D0
+000024F6  7E00                     595          MOVE.L  #0,D7
+000024F8  0C45 0040                596          CMPI.W  #$0040,D5
+000024FC  6700 0012                597          BEQ     OP_ANDI_W
+00002500  6000 0018                598          BRA     OP_ANDI_B
+00002504                           599          
+00002504                           600  OP_ANDI_L
+00002504  201E                     601          MOVE.L  (A6)+,D0
+00002506  4EB9 0000314A            602          JSR     PRINT_HEX_LONG
+0000250C  6000 0014                603          BRA     OP_ANDI_END
+00002510                           604          
+00002510                           605  OP_ANDI_W
+00002510  4EB9 00003138            606          JSR     PRINT_HEX_WORD
+00002516  6000 000A                607          BRA     OP_ANDI_END
+0000251A                           608          
+0000251A                           609  OP_ANDI_B
+0000251A  4EB9 00003108            610          JSR     PRINT_HEX_BYTE
+00002520  7E10                     611          MOVE.L  #$10,D7
+00002522                           612          
+00002522                           613  OP_ANDI_END
+00002522  1AFC 002C                614          MOVE.B  #',',(A5)+
+00002526  3A03                     615          MOVE.W  D3,D5
+00002528  0245 003F                616          ANDI.W  #$003F,D5
+0000252C  7C01                     617          MOVE.L  #1,D6
+0000252E  4EB8 3600                618          JSR     DUKE_EA_FUNCTION
+00002532                           619          
+00002532  6000 FCDC                620          BRA     LOOP_END 
+00002536                           621          
+00002536                           622  OP_ASD_D
+00002536  4EB9 000030E4            623          JSR     PRINT_ADDRESS
+0000253C                           624          
+0000253C  0803 0008                625          BTST.L  #8,D3
+00002540  6700 0010                626          BEQ     OP_ASR_D
+00002544  6000 0002                627          BRA     OP_ASL_D
+00002548                           628          
+00002548                           629  OP_ASL_D
+00002548  43F9 00003269            630          LEA     TXT_OP_ASL,A1
+0000254E  6000 0008                631          BRA     OP_ASD_D_END
+00002552                           632          
+00002552                           633  OP_ASR_D
+00002552  43F9 0000326E            634          LEA     TXT_OP_ASR,A1
+00002558                           635          
+00002558                           636  OP_ASD_D_END
+00002558  4EB9 0000315C            637          JSR     APPEND_STRING
+0000255E  3A03                     638          MOVE.W  D3,D5
+00002560  0245 00C0                639          ANDI.W  #$00C0,D5
+00002564  4EB9 00003166            640          JSR     PRINT_SIZE
+0000256A                           641          
+0000256A  1AFC 0044                642          MOVE.B  #'D',(A5)+
+0000256E  3003                     643          MOVE.W  D3,D0
+00002570  0240 0E00                644          ANDI.W  #$0E00,D0
+00002574  123C 0009                645          MOVE.B  #9,D1
+00002578  E268                     646          LSR.W   D1,D0
+0000257A  0600 0030                647          ADD.B  #$30,D0
+0000257E  1AC0                     648          MOVE.B  D0,(A5)+
+00002580                           649          
+00002580  1AFC 002C                650          MOVE.B  #',',(A5)+
+00002584  1AFC 0044                651          MOVE.B  #'D',(A5)+
+00002588  3003                     652          MOVE.W  D3,D0
+0000258A  0240 0007                653          ANDI.W  #$0007,D0
+0000258E  0600 0030                654          ADD.B  #$30,D0
+00002592  1AC0                     655          MOVE.B  D0,(A5)+
+00002594                           656          
+00002594  6000 FC7A                657          BRA     LOOP_END
+00002598                           658          
+00002598                           659  OP_ASD_I
+00002598  4EB9 000030E4            660          JSR     PRINT_ADDRESS
+0000259E                           661          
+0000259E  0803 0008                662          BTST.L  #8,D3
+000025A2  6700 0010                663          BEQ     OP_ASR_I
+000025A6  6000 0002                664          BRA     OP_ASL_I
+000025AA                           665          
+000025AA                           666  OP_ASL_I
+000025AA  43F9 00003269            667          LEA     TXT_OP_ASL,A1
+000025B0  6000 0008                668          BRA     OP_ASD_I_END
+000025B4                           669          
+000025B4                           670  OP_ASR_I
+000025B4  43F9 0000326E            671          LEA     TXT_OP_ASR,A1
+000025BA                           672          
+000025BA                           673  OP_ASD_I_END
+000025BA  4EB9 0000315C            674          JSR     APPEND_STRING
+000025C0  3A03                     675          MOVE.W  D3,D5
+000025C2  0245 00C0                676          ANDI.W  #$00C0,D5
+000025C6  4EB9 00003166            677          JSR     PRINT_SIZE
+000025CC                           678          
+000025CC  1AFC 0023                679          MOVE.B  #'#',(A5)+
+000025D0  3003                     680          MOVE.W  D3,D0
+000025D2  0240 0E00                681          ANDI.W  #$0E00,D0
+000025D6  123C 0009                682          MOVE.B  #9,D1
+000025DA  E268                     683          LSR.W   D1,D0
+000025DC  0600 0030                684          ADD.B  #$30,D0
+000025E0  1AC0                     685          MOVE.B  D0,(A5)+
+000025E2                           686          
+000025E2  1AFC 002C                687          MOVE.B  #',',(A5)+
+000025E6  1AFC 0044                688          MOVE.B  #'D',(A5)+
+000025EA  3003                     689          MOVE.W  D3,D0
+000025EC  0240 0007                690          ANDI.W  #$0007,D0
+000025F0  0600 0030                691          ADD.B  #$30,D0
+000025F4  1AC0                     692          MOVE.B  D0,(A5)+
+000025F6  6000 FC18                693          BRA     LOOP_END
+000025FA                           694          
+000025FA                           695  OP_ASD_EA
+000025FA  4EB9 000030E4            696          JSR     PRINT_ADDRESS
+00002600                           697          
+00002600  0803 0008                698          BTST.L  #8,D3
+00002604  6700 0010                699          BEQ     OP_ASR_EA
+00002608  6000 0002                700          BRA     OP_ASL_EA
+0000260C                           701          
+0000260C                           702  OP_ASL_EA
+0000260C  43F9 00003273            703          LEA     TXT_OP_ASL_EA,A1
+00002612  6000 0008                704          BRA     OP_ASD_EA_END
+00002616                           705          
+00002616                           706  OP_ASR_EA
+00002616  43F9 0000327C            707          LEA     TXT_OP_ASR_EA,A1
+0000261C                           708          
+0000261C                           709  OP_ASD_EA_END
+0000261C  4EB9 0000315C            710          JSR     APPEND_STRING
+00002622                           711          
+00002622  3A03                     712          MOVE.W  D3,D5
+00002624  0245 003F                713          ANDI.W  #$003F,D5
+00002628  7C01                     714          MOVE.L  #1,D6
+0000262A  7E00                     715          MOVE.L  #0,D7
+0000262C  4EB8 3600                716          JSR     DUKE_EA_FUNCTION
+00002630                           717          
+00002630  6000 FBDE                718          BRA     LOOP_END
+00002634                           719          
+00002634                           720  OP_BCC
+00002634  4EB9 000030E4            721          JSR     PRINT_ADDRESS
+0000263A  43F9 00003285            722          LEA     TXT_OP_BCC,A1
+00002640  4EB9 0000315C            723          JSR     APPEND_STRING
+00002646                           724          
+00002646                           725  OP_BCC_COMMON
+00002646  200E                     726          MOVE.L  A6,D0
+00002648  3A03                     727          MOVE.W  D3,D5
+0000264A  0245 00FF                728          ANDI.W  #$00FF,D5
+0000264E  0C45 0000                729          CMPI.W  #$0000,D5
+00002652  6700 0010                730          BEQ     OP_BCC_2BYTE_DISPLACE
+00002656  0C45 00FF                731          CMPI.W  #$00FF,D5
+0000265A  6700 000E                732          BEQ     OP_BCC_4BYTE_DISPLACE
+0000265E                           733          
+0000265E                           734          ;1 BYTE DISPLACE
+0000265E  3205                     735          MOVE.W  D5,D1
+00002660  6000 000A                736          BRA     OP_BCC_END
+00002664                           737          
+00002664                           738  OP_BCC_2BYTE_DISPLACE
+00002664  321E                     739          MOVE.W  (A6)+,D1
+00002666  6000 0004                740          BRA     OP_BCC_END
+0000266A                           741          
+0000266A                           742  OP_BCC_4BYTE_DISPLACE
+0000266A  221E                     743          MOVE.L  (A6)+,D1
+0000266C                           744          
+0000266C                           745  OP_BCC_END
+0000266C  D081                     746          ADD.L   D1,D0
+0000266E  4EB9 0000314A            747          JSR     PRINT_HEX_LONG
+00002674                           748          
+00002674  6000 FB9A                749          BRA     LOOP_END
+00002678                           750          
+00002678                           751  OP_BGT
+00002678  4EB9 000030E4            752          JSR     PRINT_ADDRESS
+0000267E  43F9 0000328E            753          LEA     TXT_OP_BGT,A1
+00002684  4EB9 0000315C            754          JSR     APPEND_STRING
+0000268A  60BA                     755          BRA     OP_BCC_COMMON
+0000268C                           756          
+0000268C                           757  OP_BLE
+0000268C  4EB9 000030E4            758          JSR     PRINT_ADDRESS
+00002692  43F9 00003297            759          LEA     TXT_OP_BLE,A1
+00002698  4EB9 0000315C            760          JSR     APPEND_STRING
+0000269E  60A6                     761          BRA     OP_BCC_COMMON
+000026A0                           762          
+000026A0                           763  OP_BVS
+000026A0  4EB9 000030E4            764          JSR     PRINT_ADDRESS
+000026A6  43F9 000032A9            765          LEA     TXT_OP_BVS,A1
+000026AC  4EB9 0000315C            766          JSR     APPEND_STRING
+000026B2  6092                     767          BRA     OP_BCC_COMMON
+000026B4                           768          
+000026B4                           769  OP_BCHG
+000026B4  3A03                     770          MOVE.W  D3,D5
+000026B6  0245 F1C0                771          ANDI.W  #$F1C0,D5
+000026BA  0C45 0140                772          CMPI.W  #$0140,D5
+000026BE  6600 09FE                773          BNE     BAD_INPUT
+000026C2                           774          
+000026C2  4EB9 000030E4            775          JSR     PRINT_ADDRESS
+000026C8  43F9 000032B2            776          LEA     TXT_OP_BCHG,A1
+000026CE  4EB9 0000315C            777          JSR     APPEND_STRING
+000026D4  1AFC 0044                778          MOVE.B  #'D',(A5)+
+000026D8                           779          
+000026D8  3A03                     780          MOVE.W  D3,D5
+000026DA  0245 0E00                781          ANDI.W  #$0E00,D5
+000026DE  103C 0009                782          MOVE.B  #9,D0
+000026E2  E06D                     783          LSR.W   D0,D5
+000026E4  0645 0030                784          ADD.W   #$30,D5
+000026E8  1AC5                     785          MOVE.B  D5,(A5)+
+000026EA  1AFC 002C                786          MOVE.B  #',',(A5)+
+000026EE                           787          
+000026EE  3A03                     788          MOVE.W  D3,D5
+000026F0  0245 003F                789          ANDI.W  #$003F,D5
+000026F4  7C01                     790          MOVE.L  #1,D6
+000026F6  7E00                     791          MOVE.L  #0,D7
+000026F8  4EB8 3600                792          JSR     DUKE_EA_FUNCTION
+000026FC                           793          
+000026FC  6000 FB12                794          BRA     LOOP_END
+00002700                           795          
+00002700                           796  OP_BCHGI
+00002700  3A03                     797          MOVE.W  D3,D5
+00002702  0245 FFC0                798          ANDI.W  #$FFC0,D5
+00002706  0C45 0840                799          CMPI.W  #$0840,D5
+0000270A  6600 09B2                800          BNE     BAD_INPUT
+0000270E                           801          
+0000270E  4EB9 000030E4            802          JSR     PRINT_ADDRESS
+00002714  43F9 000032B2            803          LEA     TXT_OP_BCHG,A1
+0000271A  4EB9 0000315C            804          JSR     APPEND_STRING
+00002720  1AFC 0023                805          MOVE.B  #'#',(A5)+
+00002724  1AFC 0024                806          MOVE.B  #'$',(A5)+
+00002728  301E                     807          MOVE.W  (A6)+,D0
+0000272A  4EB9 00003138            808          JSR     PRINT_HEX_WORD
+00002730  1AFC 002C                809          MOVE.B  #',',(A5)+
+00002734                           810          
+00002734  3A03                     811          MOVE.W  D3,D5
+00002736  0245 003F                812          ANDI.W  #$003F,D5
+0000273A  7C01                     813          MOVE.L  #1,D6
+0000273C  7E00                     814          MOVE.L  #0,D7
+0000273E  4EB8 3600                815          JSR     DUKE_EA_FUNCTION
+00002742                           816          
+00002742  6000 FACC                817          BRA     LOOP_END
+00002746                           818          
+00002746                           819  OP_BSR
+00002746  4EB9 000030E4            820          JSR     PRINT_ADDRESS
+0000274C  43F9 000032A0            821          LEA     TXT_OP_BSR,A1
+00002752  4EB9 0000315C            822          JSR     APPEND_STRING
+00002758  6000 FEEC                823          BRA     OP_BCC_COMMON
+0000275C                           824  
+0000275C                           825  OP_CLR   
+0000275C                           826          ; Verify it's a CLR instruction
+0000275C  3A03                     827          MOVE.W  D3,D5
+0000275E  0245 FF00                828          ANDI.W  #$FF00,D5
+00002762  0C45 4200                829          CMPI.W  #$4200,D5
+00002766  6600 0956                830          BNE     BAD_INPUT
+0000276A                           831          
+0000276A                           832          ; CLR cannot have bits 6 and 7 set to 11
+0000276A  3A03                     833          MOVE.W  D3,D5
+0000276C  0245 00C0                834          ANDI.W  #$00C0,D5
+00002770  0C45 00C0                835          CMPI.W  #$00C0,D5
+00002774  6700 0948                836          BEQ     BAD_INPUT
+00002778                           837          
+00002778                           838          ; Print instructions
+00002778  4EB9 000030E4            839          JSR     PRINT_ADDRESS
+0000277E  43F9 000032BB            840          LEA     TXT_OP_CLR,A1
+00002784  4EB9 0000315C            841          JSR     APPEND_STRING
+0000278A  4EB9 00003166            842          JSR     PRINT_SIZE
+00002790                           843          
+00002790  3A03                     844          MOVE.W  D3,D5
+00002792  1C3C 0001                845          MOVE.B  #1,D6
+00002796  0245 003F                846          ANDI.W  #$003F,D5
+0000279A  4EB8 3600                847          JSR     DUKE_EA_FUNCTION
+0000279E                           848          
+0000279E  6000 FA70                849          BRA     LOOP_END
+000027A2                           850          
+000027A2                           851  OP_CMP
+000027A2  3A03                     852          MOVE.W  D3,D5
+000027A4  0245 00C0                853          ANDI.W  #$00C0,D5
+000027A8  0C45 00C0                854          CMPI.W  #$00C0,D5
+000027AC  6700 0910                855          BEQ     BAD_INPUT
+000027B0                           856          
+000027B0  4EB9 000030E4            857          JSR     PRINT_ADDRESS
+000027B6  43F9 000032C0            858          LEA     TXT_OP_CMP,A1
+000027BC  4EB9 0000315C            859          JSR     APPEND_STRING
+000027C2  4EB9 00003166            860          JSR     PRINT_SIZE
+000027C8                           861          
+000027C8  3A03                     862          MOVE.W  D3,D5
+000027CA  7C01                     863          MOVE.L  #1,D6
+000027CC  0245 003F                864          ANDI.W  #$003F,D5
+000027D0  4EB8 3600                865          JSR     DUKE_EA_FUNCTION
+000027D4                           866          
+000027D4  1AFC 002C                867          MOVE.B  #',',(A5)+
+000027D8  1AFC 0044                868          MOVE.B  #'D',(A5)+
+000027DC  3A03                     869          MOVE.W  D3,D5
+000027DE  0245 0E00                870          ANDI.W  #$0E00,D5
+000027E2  103C 0009                871          MOVE.B  #9,D0
+000027E6  E06D                     872          LSR.W   D0,D5
+000027E8  0645 0030                873          ADD     #$30,D5
+000027EC  1AC5                     874          MOVE.B  D5,(A5)+
+000027EE                           875          
+000027EE  6000 FA20                876          BRA     LOOP_END
+000027F2                           877          
+000027F2                           878  OP_CMPA
+000027F2  3A03                     879          MOVE.W  D3,D5
+000027F4  0245 00C0                880          ANDI.W  #$00C0,D5
+000027F8  0C45 00C0                881          CMPI.W  #$00C0,D5
+000027FC  6600 08C0                882          BNE     BAD_INPUT
+00002800                           883          
+00002800  4EB9 000030E4            884          JSR     PRINT_ADDRESS
+00002806  0803 0008                885          BTST.L  #8,D3
+0000280A  6600 000C                886          BNE     OP_CMPA_L
+0000280E                           887          
+0000280E                           888  OP_CMPA_W
+0000280E  43F9 000032C5            889          LEA     TXT_OP_CMPAW,A1
+00002814  6000 0008                890          BRA     OP_CMPA_END
+00002818                           891          
+00002818                           892  OP_CMPA_L
+00002818  43F9 000032CE            893          LEA     TXT_OP_CMPAL,A1
+0000281E                           894          
+0000281E                           895  OP_CMPA_END
+0000281E  4EB9 0000315C            896          JSR     APPEND_STRING
+00002824                           897          
+00002824  3A03                     898          MOVE.W  D3,D5
+00002826  7C01                     899          MOVE.L  #1,D6
+00002828  7E11                     900          MOVE.L  #$11,D7
+0000282A  0245 003F                901          ANDI.W  #$003F,D5
+0000282E  4EB8 3600                902          JSR     DUKE_EA_FUNCTION
+00002832                           903          
+00002832  1AFC 002C                904          MOVE.B  #',',(A5)+
+00002836  1AFC 0041                905          MOVE.B  #'A',(A5)+
+0000283A  3A03                     906          MOVE.W  D3,D5
+0000283C  0245 0E00                907          ANDI.W  #$0E00,D5
+00002840  103C 0009                908          MOVE.B  #9,D0
+00002844  E06D                     909          LSR.W   D0,D5
+00002846  0645 0030                910          ADD     #$30,D5
+0000284A  1AC5                     911          MOVE.B  D5,(A5)+
+0000284C                           912          
+0000284C  6000 F9C2                913          BRA     LOOP_END
+00002850                           914          
+00002850                           915  OP_CMPI
+00002850  3A03                     916          MOVE.W  D3,D5
+00002852  0245 FF00                917          ANDI.W  #$FF00,D5
+00002856  0C45 0C00                918          CMPI.W  #$0C00,D5
+0000285A  6600 0862                919          BNE     BAD_INPUT
+0000285E                           920          
+0000285E  4EB9 000030E4            921          JSR     PRINT_ADDRESS
+00002864  43F9 000032D7            922          LEA     TXT_OP_CMPI,A1
+0000286A  4EB9 0000315C            923          JSR     APPEND_STRING
+00002870  3A03                     924          MOVE.W  D3,D5
+00002872  0245 00C0                925          ANDI.W  #$00C0,D5
+00002876  4EB9 00003166            926          JSR     PRINT_SIZE
+0000287C  1AFC 0023                927          MOVE.B  #'#',(A5)+
+00002880  1AFC 0024                928          MOVE.B  #'$',(A5)+
+00002884                           929          
+00002884  0C45 0080                930          CMPI.W  #$0080,D5
+00002888  6700 0010                931          BEQ     OP_CMPI_L
+0000288C                           932          
+0000288C  301E                     933          MOVE.W  (A6)+,D0
+0000288E  4EB9 00003138            934          JSR     PRINT_HEX_WORD
+00002894  7E11                     935          MOVE.L  #$11,D7
+00002896  6000 000C                936          BRA     OP_CMPI_END
+0000289A                           937          
+0000289A                           938  OP_CMPI_L
+0000289A  201E                     939          MOVE.L  (A6)+,D0
+0000289C  7E10                     940          MOVE.L  #$10,D7
+0000289E  4EB9 0000314A            941          JSR     PRINT_HEX_LONG
+000028A4                           942          
+000028A4                           943  OP_CMPI_END
+000028A4  1AFC 002C                944          MOVE.B  #',',(A5)+
+000028A8  3A03                     945          MOVE.W  D3,D5
+000028AA  0245 003F                946          ANDI.W  #$003F,D5
+000028AE  7C01                     947          MOVE.L  #1,D6
+000028B0  4EB8 3600                948          JSR     DUKE_EA_FUNCTION
+000028B4                           949          
+000028B4  6000 F95A                950          BRA     LOOP_END
+000028B8                           951          
+000028B8                           952  OP_DIVSW
+000028B8  3A03                     953          MOVE.W  D3,D5
+000028BA  0245 F1C0                954          ANDI.W  #$F1C0,D5
+000028BE  0C45 81C0                955          CMPI.W  #$81C0,D5
+000028C2  6600 07FA                956          BNE     BAD_INPUT
+000028C6                           957          
+000028C6  4EB9 000030E4            958          JSR     PRINT_ADDRESS
+000028CC  43F9 000032DD            959          LEA     TXT_OP_DIVSW,A1
+000028D2  4EB9 0000315C            960          JSR     APPEND_STRING
+000028D8                           961          
+000028D8  3A03                     962          MOVE.W  D3,D5
+000028DA  0245 003F                963          ANDI.W  #$003F,D5
+000028DE  7C01                     964          MOVE.L  #1,D6
+000028E0  7E0B                     965          MOVE.L  #11,D7
+000028E2  4EB8 3600                966          JSR     DUKE_EA_FUNCTION
+000028E6                           967          
+000028E6  1AFC 002C                968          MOVE.B  #',',(A5)+
+000028EA  1AFC 0044                969          MOVE.B  #'D',(A5)+
+000028EE  3A03                     970          MOVE.W  D3,D5
+000028F0  0245 0E00                971          ANDI.W  #$0E00,D5
+000028F4  123C 0009                972          MOVE.B  #9,D1
+000028F8  E26D                     973          LSR.W   D1,D5
+000028FA  0645 0030                974          ADD     #$30,D5
+000028FE  1AC5                     975          MOVE.B  D5,(A5)+
+00002900                           976          
+00002900  6000 F90E                977          BRA     LOOP_END
+00002904                           978          
+00002904                           979  OP_EOR
+00002904  3A03                     980          MOVE.W  D3,D5
+00002906  0245 F100                981          ANDI.W  #$F100,D5
+0000290A  0C45 B100                982          CMPI.W  #$B100,D5
+0000290E  6600 07AE                983          BNE     BAD_INPUT
+00002912                           984          
+00002912  3A03                     985          MOVE.W  D3,D5
+00002914  0245 00C0                986          ANDI.W  #$00C0,D5
+00002918  0C45 00C0                987          CMPI.W  #$00C0,D5
+0000291C  6700 07A0                988          BEQ     BAD_INPUT
+00002920                           989          
+00002920  4EB9 000030E4            990          JSR     PRINT_ADDRESS
+00002926  43F9 000032E6            991          LEA     TXT_OP_EOR,A1
+0000292C  4EB9 0000315C            992          JSR     APPEND_STRING
+00002932  4EB9 00003166            993          JSR     PRINT_SIZE
+00002938  2E05                     994          MOVE.L  D5,D7
+0000293A  1AFC 0044                995          MOVE.B  #'D',(A5)+
+0000293E                           996          
+0000293E  3A03                     997          MOVE.W  D3,D5
+00002940  0245 0E00                998          ANDI.W  #$0E00,D5
+00002944  123C 0009                999          MOVE.B  #9,D1
+00002948  E26D                    1000          LSR.W   D1,D5
+0000294A  0645 0030               1001          ADD     #$30,D5
+0000294E  1AC5                    1002          MOVE.B  D5,(A5)+
+00002950  1AFC 002C               1003          MOVE.B  #',',(A5)+
+00002954                          1004          
+00002954  3A03                    1005          MOVE.W  D3,D5
+00002956  0245 003F               1006          ANDI.W  #$003F,D5
+0000295A  7C01                    1007          MOVE.L  #1,D6
+0000295C  4EB8 3600               1008          JSR     DUKE_EA_FUNCTION
+00002960                          1009          
+00002960  6000 F8AE               1010          BRA     LOOP_END
+00002964                          1011          
+00002964                          1012  OP_EORI
+00002964  3A03                    1013          MOVE.W  D3,D5
+00002966  0245 FF00               1014          ANDI.W  #$FF00,D5
+0000296A  0C45 0A00               1015          CMPI.W  #$0A00,D5
+0000296E  6600 074E               1016          BNE     BAD_INPUT
+00002972                          1017          
+00002972  3A03                    1018          MOVE.W  D3,D5
+00002974  0245 00C0               1019          ANDI.W  #$00C0,D5
+00002978  0C45 00C0               1020          CMPI.W  #$00C0,D5
+0000297C  6700 0740               1021          BEQ     BAD_INPUT
+00002980                          1022          
+00002980  4EB9 000030E4           1023          JSR     PRINT_ADDRESS
+00002986  43F9 000032EB           1024          LEA     TXT_OP_EORI,A1
+0000298C  4EB9 0000315C           1025          JSR     APPEND_STRING
+00002992  4EB9 00003166           1026          JSR     PRINT_SIZE
+00002998  2E05                    1027          MOVE.L  D5,D7
+0000299A  1AFC 0023               1028          MOVE.B  #'#',(A5)+
+0000299E  1AFC 0024               1029          MOVE.B  #'$',(A5)+
+000029A2                          1030          
+000029A2  0C45 0080               1031          CMPI.W  #$0080,D5
+000029A6  6700 000E               1032          BEQ     OP_EORI_L
+000029AA                          1033          
+000029AA  301E                    1034          MOVE.W  (A6)+,D0
+000029AC  4EB9 00003138           1035          JSR     PRINT_HEX_WORD
+000029B2  6000 000A               1036          BRA     OP_EORI_END
+000029B6                          1037          
+000029B6                          1038  OP_EORI_L
+000029B6  201E                    1039          MOVE.L  (A6)+,D0
+000029B8  4EB9 0000314A           1040          JSR     PRINT_HEX_LONG
+000029BE                          1041          
+000029BE                          1042  OP_EORI_END
+000029BE  1AFC 002C               1043          MOVE.B  #',',(A5)+
+000029C2  3A03                    1044          MOVE.W  D3,D5
+000029C4  0245 003F               1045          ANDI.W  #$003F,D5
+000029C8  7C01                    1046          MOVE.L  #1,D6
+000029CA  4EB8 3600               1047          JSR     DUKE_EA_FUNCTION
+000029CE                          1048          
+000029CE  6000 F840               1049          BRA     LOOP_END
+000029D2                          1050          
+000029D2                          1051  OP_JSR
+000029D2  3A03                    1052          MOVE.W  D3,D5
+000029D4  0245 FFC0               1053          ANDI.W  #$FFC0,D5
+000029D8  0C45 4E80               1054          CMPI.W  #$4E80,D5
+000029DC  6600 06E0               1055          BNE     BAD_INPUT
+000029E0                          1056          
+000029E0  4EB9 000030E4           1057          JSR     PRINT_ADDRESS
+000029E6  43F9 000032F1           1058          LEA     TXT_OP_JSR,A1
+000029EC  4EB9 0000315C           1059          JSR     APPEND_STRING
+000029F2                          1060          
+000029F2  3A03                    1061          MOVE.W  D3,D5
+000029F4  0245 003F               1062          ANDI.W  #$003F,D5
+000029F8  7C01                    1063          MOVE.L  #1,D6
+000029FA  7E0B                    1064          MOVE.L  #11,D7
+000029FC  4EB8 3600               1065          JSR     DUKE_EA_FUNCTION
+00002A00                          1066          
+00002A00  6000 F80E               1067          BRA     LOOP_END
+00002A04                          1068  
+00002A04                          1069  OP_LEA
+00002A04                          1070          ; Veriy it's LEA
+00002A04  3A03                    1071          MOVE.W  D3,D5
+00002A06  0245 F1C0               1072          ANDI.W  #$F1C0,D5
+00002A0A  0C45 41C0               1073          CMPI.W  #$41C0,D5
+00002A0E  6600 06AE               1074          BNE     BAD_INPUT
+00002A12                          1075          
+00002A12                          1076          ; Print
+00002A12  4EB9 000030E4           1077          JSR     PRINT_ADDRESS
+00002A18  43F9 000032FA           1078          LEA     TXT_OP_LEA,A1
+00002A1E  4EB9 0000315C           1079          JSR     APPEND_STRING
+00002A24                          1080          
+00002A24  3A03                    1081          MOVE.W  D3,D5
+00002A26  0245 003F               1082          ANDI.W  #$003F,D5
+00002A2A  1C3C 0001               1083          MOVE.B  #1,D6
+00002A2E  1E3C 0010               1084          MOVE.B  #$10,D7
+00002A32  4EB8 3600               1085          JSR     DUKE_EA_FUNCTION
+00002A36                          1086          
+00002A36  1AFC 002C               1087          MOVE.B  #',',(A5)+
+00002A3A  1AFC 0041               1088          MOVE.B  #'A',(A5)+
+00002A3E                          1089          
+00002A3E                          1090          ; Print Address Register
+00002A3E  3A03                    1091          MOVE.W  D3,D5
+00002A40  0245 0E00               1092          ANDI.W  #$0E00,D5
+00002A44  103C 0009               1093          MOVE.B  #9,D0
+00002A48  E06D                    1094          LSR.W   D0,D5
+00002A4A  0645 0030               1095          ADD.W   #$30,D5
+00002A4E  1AC5                    1096          MOVE.B  D5,(A5)+
+00002A50                          1097          
+00002A50  6000 F7BE               1098          BRA     LOOP_END
+00002A54                          1099          
+00002A54                          1100  OP_LSD_D
+00002A54  4EB9 000030E4           1101          JSR     PRINT_ADDRESS
+00002A5A  0803 0008               1102          BTST.L  #8,D3
+00002A5E  6700 000C               1103          BEQ     OP_LSR_D
+00002A62                          1104          
+00002A62  43F9 00003303           1105          LEA     TXT_OP_LSL,A1
+00002A68  6000 0008               1106          BRA     OP_LSD_D_END
+00002A6C                          1107          
+00002A6C                          1108  OP_LSR_D
+00002A6C  43F9 00003308           1109          LEA     TXT_OP_LSR,A1
+00002A72                          1110          
+00002A72                          1111  OP_LSD_D_END
+00002A72  4EB9 0000315C           1112          JSR     APPEND_STRING
+00002A78                          1113          
+00002A78  3A03                    1114          MOVE.W  D3,D5
+00002A7A  0245 00C0               1115          ANDI.W  #$00C0,D5
+00002A7E  4EB9 00003166           1116          JSR     PRINT_SIZE
+00002A84                          1117          
+00002A84  1AFC 0044               1118          MOVE.B  #'D',(A5)+
+00002A88  3A03                    1119          MOVE.W  D3,D5
+00002A8A  0245 0E00               1120          ANDI.W  #$0E00,D5
+00002A8E  103C 0009               1121          MOVE.B  #9,D0
+00002A92  E06D                    1122          LSR.W   D0,D5
+00002A94  0645 0030               1123          ADD     #$30,D5
+00002A98  1AC5                    1124          MOVE.B  D5,(A5)+
+00002A9A                          1125          
+00002A9A  1AFC 002C               1126          MOVE.B  #',',(A5)+
+00002A9E  1AFC 0044               1127          MOVE.B  #'D',(A5)+
+00002AA2  3A03                    1128          MOVE.W  D3,D5
+00002AA4  0245 0007               1129          ANDI.W  #$0007,D5
+00002AA8  E06D                    1130          LSR.W   D0,D5
+00002AAA  0645 0030               1131          ADD     #$30,D5
+00002AAE  1AC5                    1132          MOVE.B  D5,(A5)+
+00002AB0                          1133          
+00002AB0  6000 F75E               1134          BRA     LOOP_END
+00002AB4                          1135          
+00002AB4                          1136  OP_LSD_I
+00002AB4  4EB9 000030E4           1137          JSR     PRINT_ADDRESS
+00002ABA  0803 0008               1138          BTST.L  #8,D3
+00002ABE  6700 000C               1139          BEQ     OP_LSR_I
+00002AC2                          1140          
+00002AC2  43F9 00003303           1141          LEA     TXT_OP_LSL,A1
+00002AC8  6000 0008               1142          BRA     OP_LSD_I_END
+00002ACC                          1143          
+00002ACC                          1144  OP_LSR_I
+00002ACC  43F9 00003308           1145          LEA     TXT_OP_LSR,A1
+00002AD2                          1146          
+00002AD2                          1147  OP_LSD_I_END
+00002AD2  4EB9 0000315C           1148          JSR     APPEND_STRING
+00002AD8                          1149          
+00002AD8  3A03                    1150          MOVE.W  D3,D5
+00002ADA  0245 00C0               1151          ANDI.W  #$00C0,D5
+00002ADE  4EB9 00003166           1152          JSR     PRINT_SIZE
+00002AE4                          1153          
+00002AE4  1AFC 0023               1154          MOVE.B  #'#',(A5)+
+00002AE8  3A03                    1155          MOVE.W  D3,D5
+00002AEA  0245 0E00               1156          ANDI.W  #$0E00,D5
+00002AEE  103C 0009               1157          MOVE.B  #9,D0
+00002AF2  E06D                    1158          LSR.W   D0,D5
+00002AF4  0645 0030               1159          ADD     #$30,D5
+00002AF8  1AC5                    1160          MOVE.B  D5,(A5)+
+00002AFA                          1161          
+00002AFA  1AFC 002C               1162          MOVE.B  #',',(A5)+
+00002AFE  1AFC 0044               1163          MOVE.B  #'D',(A5)+
+00002B02  3A03                    1164          MOVE.W  D3,D5
+00002B04  0245 0003               1165          ANDI.W  #$0003,D5
+00002B08  0645 0030               1166          ADD     #$30,D5
+00002B0C  1AC5                    1167          MOVE.B  D5,(A5)+
+00002B0E                          1168          
+00002B0E  6000 F700               1169          BRA     LOOP_END
+00002B12                          1170          
+00002B12                          1171  OP_LSD_EA
+00002B12  4EB9 000030E4           1172          JSR     PRINT_ADDRESS
+00002B18  0803 0008               1173          BTST.L  #8,D3
+00002B1C  6700 000C               1174          BEQ     OP_LSR_EA
+00002B20                          1175          
+00002B20  43F9 00003303           1176          LEA     TXT_OP_LSL,A1
+00002B26  6000 0008               1177          BRA     OP_LSD_EA_END
+00002B2A                          1178          
+00002B2A                          1179  OP_LSR_EA
+00002B2A  43F9 00003308           1180          LEA     TXT_OP_LSR,A1
+00002B30                          1181          
+00002B30                          1182  OP_LSD_EA_END
+00002B30  4EB9 0000315C           1183          JSR     APPEND_STRING
+00002B36  1AFC 0057               1184          MOVE.B  #'W',(A5)+
+00002B3A  1AFC 0020               1185          MOVE.B  #' ',(A5)+
+00002B3E                          1186          
+00002B3E  3A03                    1187          MOVE.W  D3,D5
+00002B40  0245 003F               1188          ANDI.W  #$003F,D5
+00002B44  7C01                    1189          MOVE.L  #1,D6
+00002B46  7E01                    1190          MOVE.L  #$01,D7
+00002B48  4EB8 3600               1191          JSR     DUKE_EA_FUNCTION
+00002B4C                          1192          
+00002B4C  6000 F6C2               1193          BRA     LOOP_END
+00002B50                          1194          
+00002B50                          1195  OP_MOVEAB
+00002B50  4EB9 000030E4           1196          JSR     PRINT_ADDRESS
+00002B56  43F9 00003328           1197          LEA     TXT_OP_MOVEAB,A1
+00002B5C  4EB9 0000315C           1198          JSR     APPEND_STRING
+00002B62                          1199          
+00002B62  3A03                    1200          MOVE.W  D3,D5
+00002B64  0245 003F               1201          ANDI.W  #$003F,D5
+00002B68  7C01                    1202          MOVE.L  #1,D6
+00002B6A  7E00                    1203          MOVE.L  #$00,D7
+00002B6C  4EB8 3600               1204          JSR     DUKE_EA_FUNCTION
+00002B70                          1205          
+00002B70  1AFC 002C               1206          MOVE.B  #',',(A5)+
+00002B74  1AFC 0041               1207          MOVE.B  #'A',(A5)+
+00002B78  3A03                    1208          MOVE.W  D3,D5
+00002B7A  0245 0E00               1209          ANDI.W  #$0E00,D5
+00002B7E  103C 0009               1210          MOVE.B  #9,D0
+00002B82  E06D                    1211          LSR.W   D0,D5
+00002B84  0645 0030               1212          ADD     #$30,D5
+00002B88  1AC5                    1213          MOVE.B  D5,(A5)+
+00002B8A                          1214          
+00002B8A  6000 F684               1215          BRA     LOOP_END
+00002B8E                          1216          
+00002B8E                          1217  OP_MOVEAL
+00002B8E  4EB9 000030E4           1218          JSR     PRINT_ADDRESS
+00002B94  43F9 00003331           1219          LEA     TXT_OP_MOVEAL,A1
+00002B9A  4EB9 0000315C           1220          JSR     APPEND_STRING
+00002BA0                          1221          
+00002BA0  3A03                    1222          MOVE.W  D3,D5
+00002BA2  0245 003F               1223          ANDI.W  #$003F,D5
+00002BA6  7C01                    1224          MOVE.L  #1,D6
+00002BA8  7E10                    1225          MOVE.L  #$10,D7
+00002BAA  4EB8 3600               1226          JSR     DUKE_EA_FUNCTION
+00002BAE                          1227          
+00002BAE  1AFC 002C               1228          MOVE.B  #',',(A5)+
+00002BB2  1AFC 0041               1229          MOVE.B  #'A',(A5)+
+00002BB6  3A03                    1230          MOVE.W  D3,D5
+00002BB8  0245 0E00               1231          ANDI.W  #$0E00,D5
+00002BBC  103C 0009               1232          MOVE.B  #9,D0
+00002BC0  E06D                    1233          LSR.W   D0,D5
+00002BC2  0645 0030               1234          ADD     #$30,D5
+00002BC6  1AC5                    1235          MOVE.B  D5,(A5)+
+00002BC8                          1236          
+00002BC8  6000 F646               1237          BRA     LOOP_END
+00002BCC                          1238  
+00002BCC                          1239  OP_MOVEAW
+00002BCC  4EB9 000030E4           1240          JSR     PRINT_ADDRESS
+00002BD2  43F9 0000333A           1241          LEA     TXT_OP_MOVEAW,A1
+00002BD8  4EB9 0000315C           1242          JSR     APPEND_STRING
+00002BDE                          1243          
+00002BDE  3A03                    1244          MOVE.W  D3,D5
+00002BE0  0245 003F               1245          ANDI.W  #$003F,D5
+00002BE4  7C01                    1246          MOVE.L  #1,D6
+00002BE6  7E01                    1247          MOVE.L  #$01,D7
+00002BE8  4EB8 3600               1248          JSR     DUKE_EA_FUNCTION
+00002BEC                          1249          
+00002BEC  1AFC 002C               1250          MOVE.B  #',',(A5)+
+00002BF0  1AFC 0041               1251          MOVE.B  #'A',(A5)+
+00002BF4  3A03                    1252          MOVE.W  D3,D5
+00002BF6  0245 0E00               1253          ANDI.W  #$0E00,D5
+00002BFA  103C 0009               1254          MOVE.B  #9,D0
+00002BFE  E06D                    1255          LSR.W   D0,D5
+00002C00  0645 0030               1256          ADD     #$30,D5
+00002C04  1AC5                    1257          MOVE.B  D5,(A5)+
+00002C06                          1258          
+00002C06  6000 F608               1259          BRA     LOOP_END
+00002C0A                          1260  
+00002C0A                          1261  OP_MOVEB
+00002C0A                          1262          ; Verify
+00002C0A  3A03                    1263          MOVE.W  D3,D5
+00002C0C  0245 F000               1264          ANDI.W  #$F000,D5
+00002C10  0C45 1000               1265          CMPI.W  #$1000,D5
+00002C14  6600 04A8               1266          BNE     BAD_INPUT
+00002C18                          1267          
+00002C18                          1268          ; Print
+00002C18  4EB9 000030E4           1269          JSR     PRINT_ADDRESS
+00002C1E  43F9 0000330D           1270          LEA     TXT_OP_MOVEB,A1
+00002C24  4EB9 0000315C           1271          JSR     APPEND_STRING
+00002C2A                          1272          
+00002C2A  3A03                    1273          MOVE.W  D3,D5
+00002C2C  0245 003F               1274          ANDI.W  #$003F,D5
+00002C30  1C3C 0001               1275          MOVE.B  #1,D6
+00002C34  1E3C 0000               1276          MOVE.B  #0,D7
+00002C38  4EB8 3600               1277          JSR     DUKE_EA_FUNCTION
+00002C3C                          1278          
+00002C3C  1AFC 002C               1279          MOVE.B  #',',(A5)+
+00002C40                          1280          
+00002C40  3A03                    1281          MOVE.W  D3,D5
+00002C42  0245 0FC0               1282          ANDI.W  #$0FC0,D5
+00002C46  EC4D                    1283          LSR.W   #6,D5
+00002C48  1C3C 0000               1284          MOVE.B  #0,D6
+00002C4C  4EB8 3600               1285          JSR     DUKE_EA_FUNCTION
+00002C50                          1286          
+00002C50  6000 F5BE               1287          BRA     LOOP_END
+00002C54                          1288          
+00002C54                          1289  OP_MOVEL
+00002C54  4EB9 000030E4           1290          JSR     PRINT_ADDRESS
+00002C5A  43F9 00003316           1291          LEA     TXT_OP_MOVEL,A1
+00002C60  4EB9 0000315C           1292          JSR     APPEND_STRING
+00002C66                          1293          
+00002C66  3A03                    1294          MOVE.W  D3,D5
+00002C68  0245 003F               1295          ANDI.W  #$003F,D5
+00002C6C  1C3C 0001               1296          MOVE.B  #1,D6
+00002C70  1E3C 0010               1297          MOVE.B  #$10,D7
+00002C74  4EB8 3600               1298          JSR     DUKE_EA_FUNCTION
+00002C78                          1299          
+00002C78  1AFC 002C               1300          MOVE.B  #',',(A5)+
+00002C7C                          1301          
+00002C7C  3A03                    1302          MOVE.W  D3,D5
+00002C7E  0245 0FC0               1303          ANDI.W  #$0FC0,D5
+00002C82  EC4D                    1304          LSR.W   #6,D5
+00002C84  1C3C 0000               1305          MOVE.B  #0,D6
+00002C88  4EB8 3600               1306          JSR     DUKE_EA_FUNCTION
+00002C8C                          1307          
+00002C8C  6000 F582               1308          BRA     LOOP_END
+00002C90                          1309          
+00002C90                          1310  OP_MOVEW
+00002C90  4EB9 000030E4           1311          JSR     PRINT_ADDRESS
+00002C96  43F9 0000331F           1312          LEA     TXT_OP_MOVEW,A1
+00002C9C  4EB9 0000315C           1313          JSR     APPEND_STRING
+00002CA2                          1314          
+00002CA2  3A03                    1315          MOVE.W  D3,D5
+00002CA4  0245 003F               1316          ANDI.W  #$003F,D5
+00002CA8  1C3C 0001               1317          MOVE.B  #1,D6
+00002CAC  1E3C 0001               1318          MOVE.B  #$01,D7
+00002CB0  4EB8 3600               1319          JSR     DUKE_EA_FUNCTION
+00002CB4                          1320          
+00002CB4  1AFC 002C               1321          MOVE.B  #',',(A5)+
+00002CB8                          1322          
+00002CB8  3A03                    1323          MOVE.W  D3,D5
+00002CBA  0245 0FC0               1324          ANDI.W  #$0FC0,D5
+00002CBE  EC4D                    1325          LSR.W   #6,D5
+00002CC0  1C3C 0000               1326          MOVE.B  #0,D6
+00002CC4  4EB8 3600               1327          JSR     DUKE_EA_FUNCTION
+00002CC8                          1328          
+00002CC8  6000 F546               1329          BRA     LOOP_END
+00002CCC                          1330          
+00002CCC                          1331  OP_MOVEMW_FROM
+00002CCC  3A03                    1332          MOVE.W  D3,D5
+00002CCE  0245 FFC0               1333          ANDI.W  #$FFC0,D5
+00002CD2  0C45 4880               1334          CMPI.W  #$4880,D5
+00002CD6  6600 03E6               1335          BNE     BAD_INPUT
+00002CDA                          1336          
+00002CDA  4EB9 000030E4           1337          JSR     PRINT_ADDRESS
+00002CE0  43F9 00003343           1338          LEA     TXT_OP_MOVEMW,A1
+00002CE6  4EB9 0000315C           1339          JSR     APPEND_STRING
+00002CEC                          1340          
+00002CEC  3A03                    1341          MOVE.W  D3,D5
+00002CEE  0245 0038               1342          ANDI.W  #$0038,D5
+00002CF2  0C45 0020               1343          CMPI.W  #$0020,D5
+00002CF6  6700 0006               1344          BEQ     OP_MOVEMW_FROM_DECREMENT
+00002CFA  6000 000C               1345          BRA     OP_MOVEMW_FROM_REGULAR
+00002CFE                          1346          
+00002CFE                          1347  OP_MOVEMW_FROM_DECREMENT
+00002CFE  4EB9 0000319C           1348          JSR     PRINT_MOVEM_LIST_DECREMENT
+00002D04  6000 0008               1349          BRA     OP_MOVEM_FROM_END
+00002D08                          1350          
+00002D08                          1351  OP_MOVEMW_FROM_REGULAR
+00002D08  4EB9 000031EE           1352          JSR     PRINT_MOVEM_LIST_INCREMENT
+00002D0E                          1353          
+00002D0E                          1354  OP_MOVEM_FROM_END
+00002D0E  1AFC 002C               1355          MOVE.B  #',',(A5)+
+00002D12  3A03                    1356          MOVE.W  D3,D5
+00002D14  0245 003F               1357          ANDI.W  #$003F,D5
+00002D18  7C01                    1358          MOVE.L  #1,D6
+00002D1A  7E01                    1359          MOVE.L  #$01,D7
+00002D1C  4EB8 3600               1360          JSR     DUKE_EA_FUNCTION
+00002D20                          1361          
+00002D20  6000 F4EE               1362          BRA     LOOP_END
+00002D24                          1363          
+00002D24                          1364  OP_MOVEML_FROM
+00002D24  3A03                    1365          MOVE.W  D3,D5
+00002D26  0245 FFC0               1366          ANDI.W  #$FFC0,D5
+00002D2A  0C45 48C0               1367          CMPI.W  #$48C0,D5
+00002D2E  6600 038E               1368          BNE     BAD_INPUT
+00002D32                          1369          
+00002D32  4EB9 000030E4           1370          JSR     PRINT_ADDRESS
+00002D38  43F9 0000334C           1371          LEA     TXT_OP_MOVEML,A1
+00002D3E  4EB9 0000315C           1372          JSR     APPEND_STRING
+00002D44                          1373          
+00002D44  3A03                    1374          MOVE.W  D3,D5
+00002D46  0245 0038               1375          ANDI.W  #$0038,D5
+00002D4A  0C45 0020               1376          CMPI.W  #$0020,D5
+00002D4E  6700 0006               1377          BEQ     OP_MOVEML_FROM_DECREMENT
+00002D52  6000 000A               1378          BRA     OP_MOVEML_FROM_REGULAR
+00002D56                          1379          
+00002D56                          1380  OP_MOVEML_FROM_DECREMENT
+00002D56  4EB9 0000319C           1381          JSR     PRINT_MOVEM_LIST_DECREMENT
+00002D5C  60B0                    1382          BRA     OP_MOVEM_FROM_END
+00002D5E                          1383          
+00002D5E                          1384  OP_MOVEML_FROM_REGULAR
+00002D5E  4EB9 000031EE           1385          JSR     PRINT_MOVEM_LIST_INCREMENT
+00002D64  60A8                    1386          BRA     OP_MOVEM_FROM_END
+00002D66                          1387          
+00002D66                          1388  OP_MOVEMW_TO
+00002D66  3A03                    1389          MOVE.W  D3,D5
+00002D68  0245 FFC0               1390          ANDI.W  #$FFC0,D5
+00002D6C  0C45 4C80               1391          CMPI.W  #$4C80,D5
+00002D70  6600 034C               1392          BNE     BAD_INPUT
+00002D74                          1393          
+00002D74  4EB9 000030E4           1394          JSR     PRINT_ADDRESS
+00002D7A  43F9 00003343           1395          LEA     TXT_OP_MOVEMW,A1
+00002D80  4EB9 0000315C           1396          JSR     APPEND_STRING
+00002D86                          1397          
+00002D86  3A03                    1398          MOVE.W  D3,D5
+00002D88  0245 003F               1399          ANDI.W  #$003F,D5
+00002D8C  7C01                    1400          MOVE.L  #1,D6
+00002D8E  7E01                    1401          MOVE.L  #$01,D7
+00002D90  4EB8 3600               1402          JSR     DUKE_EA_FUNCTION
+00002D94  1AFC 002C               1403          MOVE.B  #',',(A5)+
+00002D98                          1404          
+00002D98  3A03                    1405          MOVE.W  D3,D5
+00002D9A  0245 0038               1406          ANDI.W  #$0038,D5
+00002D9E  0C45 0020               1407          CMPI.W  #$0020,D5
+00002DA2  6700 0006               1408          BEQ     OP_MOVEMW_TO_DECREMENT
+00002DA6  6000 000C               1409          BRA     OP_MOVEMW_TO_REGULAR
+00002DAA                          1410          
+00002DAA                          1411  OP_MOVEMW_TO_DECREMENT
+00002DAA  4EB9 0000319C           1412          JSR     PRINT_MOVEM_LIST_DECREMENT
+00002DB0  6000 0008               1413          BRA     OP_MOVEM_TO_END
+00002DB4                          1414          
+00002DB4                          1415  OP_MOVEMW_TO_REGULAR
+00002DB4  4EB9 000031EE           1416          JSR     PRINT_MOVEM_LIST_INCREMENT
+00002DBA                          1417          
+00002DBA                          1418  OP_MOVEM_TO_END
+00002DBA  6000 F454               1419          BRA     LOOP_END
+00002DBE                          1420          
+00002DBE                          1421  OP_MOVEML_TO
+00002DBE  3A03                    1422          MOVE.W  D3,D5
+00002DC0  0245 FFC0               1423          ANDI.W  #$FFC0,D5
+00002DC4  0C45 4CC0               1424          CMPI.W  #$4CC0,D5
+00002DC8  6600 02F4               1425          BNE     BAD_INPUT
+00002DCC                          1426          
+00002DCC  4EB9 000030E4           1427          JSR     PRINT_ADDRESS
+00002DD2  43F9 0000334C           1428          LEA     TXT_OP_MOVEML,A1
+00002DD8  4EB9 0000315C           1429          JSR     APPEND_STRING
+00002DDE                          1430          
+00002DDE  3A03                    1431          MOVE.W  D3,D5
+00002DE0  0245 003F               1432          ANDI.W  #$003F,D5
+00002DE4  7C01                    1433          MOVE.L  #1,D6
+00002DE6  7E01                    1434          MOVE.L  #$01,D7
+00002DE8  4EB8 3600               1435          JSR     DUKE_EA_FUNCTION
+00002DEC  1AFC 002C               1436          MOVE.B  #',',(A5)+
+00002DF0                          1437          
+00002DF0  3A03                    1438          MOVE.W  D3,D5
+00002DF2  0245 0038               1439          ANDI.W  #$0038,D5
+00002DF6  0C45 0020               1440          CMPI.W  #$0020,D5
+00002DFA  67AE                    1441          BEQ     OP_MOVEMW_TO_DECREMENT
+00002DFC  60B6                    1442          BRA     OP_MOVEMW_TO_REGULAR
+00002DFE                          1443          
+00002DFE                          1444  OP_MOVEQ
+00002DFE  3A03                    1445          MOVE.W  D3,D5
+00002E00  0245 F100               1446          ANDI.W  #$F100,D5
+00002E04  0C45 7000               1447          CMPI.W  #$7000,D5
+00002E08  6600 02B4               1448          BNE     BAD_INPUT
+00002E0C                          1449          
+00002E0C  4EB9 000030E4           1450          JSR     PRINT_ADDRESS
+00002E12  43F9 00003355           1451          LEA     TXT_OP_MOVEQ,A1
+00002E18  4EB9 0000315C           1452          JSR     APPEND_STRING
+00002E1E                          1453          
+00002E1E  1AFC 0023               1454          MOVE.B  #'#',(A5)+
+00002E22  1AFC 0024               1455          MOVE.B  #'$',(A5)+
+00002E26  3003                    1456          MOVE.W  D3,D0
+00002E28  0240 00FF               1457          ANDI.W  #$00FF,D0
+00002E2C  4EB9 00003138           1458          JSR     PRINT_HEX_WORD
+00002E32                          1459          
+00002E32  1AFC 002C               1460          MOVE.B  #',',(A5)+
+00002E36  1AFC 0044               1461          MOVE.B  #'D',(A5)+
+00002E3A  3A03                    1462          MOVE.W  D3,D5
+00002E3C  103C 0009               1463          MOVE.B  #9,D0
+00002E40  E06D                    1464          LSR.W   D0,D5
+00002E42  0645 0030               1465          ADD     #$30,D5
+00002E46  1AC5                    1466          MOVE.B  D5,(A5)+
+00002E48                          1467          
+00002E48  6000 F3C6               1468          BRA     LOOP_END
+00002E4C                          1469          
+00002E4C                          1470  OP_MULS
+00002E4C  4EB9 000030E4           1471          JSR     PRINT_ADDRESS
+00002E52  43F9 0000335E           1472          LEA     TXT_OP_MULS,A1
+00002E58  4EB9 0000315C           1473          JSR     APPEND_STRING
+00002E5E                          1474          
+00002E5E  3A03                    1475          MOVE.W  D3,D5
+00002E60  0245 003F               1476          ANDI.W  #$003F,D5
+00002E64  7C01                    1477          MOVE.L  #1,D6
+00002E66  7E01                    1478          MOVE.L  #$01,D7
+00002E68  4EB8 3600               1479          JSR     DUKE_EA_FUNCTION
+00002E6C                          1480          
+00002E6C  1AFC 002C               1481          MOVE.B  #',',(A5)+
+00002E70  1AFC 0044               1482          MOVE.B  #'D',(A5)+
+00002E74  3A03                    1483          MOVE.W  D3,D5
+00002E76  0245 0E00               1484          ANDI.W  #$0E00,D5
+00002E7A  103C 0009               1485          MOVE.B  #9,D0
+00002E7E  E06D                    1486          LSR.W   D0,D5
+00002E80  0645 0030               1487          ADD     #$30,D5
+00002E84  1AC5                    1488          MOVE.B  D5,(A5)+
+00002E86                          1489          
+00002E86  6000 F388               1490          BRA     LOOP_END
+00002E8A                          1491          
+00002E8A                          1492  OP_NOP
+00002E8A  4EB9 000030E4           1493          JSR     PRINT_ADDRESS
+00002E90  43F9 00003367           1494          LEA     TXT_OP_NOP,A1
+00002E96  4EB9 0000315C           1495          JSR     APPEND_STRING
+00002E9C  6000 F372               1496          BRA     LOOP_END
+00002EA0                          1497          
+00002EA0                          1498  OP_ROD_D
+00002EA0  4EB9 000030E4           1499          JSR     PRINT_ADDRESS
+00002EA6  0803 0008               1500          BTST.L  #8,D3
+00002EAA  6700 000C               1501          BEQ     OP_ROR_D
+00002EAE                          1502          
+00002EAE  43F9 00003370           1503          LEA     TXT_OP_ROL,A1
+00002EB4  6000 0008               1504          BRA     OP_ROD_D_END
+00002EB8                          1505          
+00002EB8                          1506  OP_ROR_D
+00002EB8  43F9 00003375           1507          LEA     TXT_OP_ROR,A1
+00002EBE                          1508          
+00002EBE                          1509  OP_ROD_D_END
+00002EBE  4EB9 0000315C           1510          JSR     APPEND_STRING
+00002EC4                          1511          
+00002EC4  3A03                    1512          MOVE.W  D3,D5
+00002EC6  0245 00C0               1513          ANDI.W  #$00C0,D5
+00002ECA  4EB9 00003166           1514          JSR     PRINT_SIZE
+00002ED0                          1515          
+00002ED0  1AFC 0044               1516          MOVE.B  #'D',(A5)+
+00002ED4  3A03                    1517          MOVE.W  D3,D5
+00002ED6  0245 0E00               1518          ANDI.W  #$0E00,D5
+00002EDA  103C 0009               1519          MOVE.B  #9,D0
+00002EDE  E06D                    1520          LSR.W   D0,D5
+00002EE0  0645 0030               1521          ADD     #$30,D5
+00002EE4  1AC5                    1522          MOVE.B  D5,(A5)+
+00002EE6                          1523          
+00002EE6  1AFC 002C               1524          MOVE.B  #',',(A5)+
+00002EEA  1AFC 0044               1525          MOVE.B  #'D',(A5)+
+00002EEE  3A03                    1526          MOVE.W  D3,D5
+00002EF0  0245 0007               1527          ANDI.W  #$0007,D5
+00002EF4  E06D                    1528          LSR.W   D0,D5
+00002EF6  0645 0030               1529          ADD     #$30,D5
+00002EFA  1AC5                    1530          MOVE.B  D5,(A5)+
+00002EFC                          1531          
+00002EFC  6000 F312               1532          BRA     LOOP_END
+00002F00                          1533          
+00002F00                          1534  OP_ROD_I
+00002F00  4EB9 000030E4           1535          JSR     PRINT_ADDRESS
+00002F06  0803 0008               1536          BTST.L  #8,D3
+00002F0A  6700 000C               1537          BEQ     OP_ROR_I
+00002F0E                          1538          
+00002F0E  43F9 00003370           1539          LEA     TXT_OP_ROL,A1
+00002F14  6000 0008               1540          BRA     OP_ROD_I_END
+00002F18                          1541          
+00002F18                          1542  OP_ROR_I
+00002F18  43F9 00003375           1543          LEA     TXT_OP_ROR,A1
+00002F1E                          1544          
+00002F1E                          1545  OP_ROD_I_END
+00002F1E  4EB9 0000315C           1546          JSR     APPEND_STRING
+00002F24                          1547  
+00002F24  3A03                    1548          MOVE.W  D3,D5
+00002F26  0245 00C0               1549          ANDI.W  #$00C0,D5
+00002F2A  4EB9 00003166           1550          JSR     PRINT_SIZE
+00002F30                          1551          
+00002F30  1AFC 0023               1552          MOVE.B  #'#',(A5)+
+00002F34  3A03                    1553          MOVE.W  D3,D5
+00002F36  0245 0E00               1554          ANDI.W  #$0E00,D5
+00002F3A  103C 0009               1555          MOVE.B  #9,D0
+00002F3E  E06D                    1556          LSR.W   D0,D5
+00002F40  0645 0030               1557          ADD     #$30,D5
+00002F44  1AC5                    1558          MOVE.B  D5,(A5)+
+00002F46                          1559          
+00002F46  1AFC 002C               1560          MOVE.B  #',',(A5)+
+00002F4A  1AFC 0044               1561          MOVE.B  #'D',(A5)+
+00002F4E  3A03                    1562          MOVE.W  D3,D5
+00002F50  0245 0003               1563          ANDI.W  #$0003,D5
+00002F54  0645 0030               1564          ADD     #$30,D5
+00002F58  1AC5                    1565          MOVE.B  D5,(A5)+
+00002F5A                          1566          
+00002F5A  6000 F2B4               1567          BRA     LOOP_END
+00002F5E                          1568          
+00002F5E                          1569  OP_RTS
+00002F5E  3A03                    1570          MOVE.W  D3,D5
+00002F60  0C45 4E75               1571          CMPI.W  #$4E75,D5
+00002F64  6600 0158               1572          BNE     BAD_INPUT
+00002F68                          1573          
+00002F68  4EB9 000030E4           1574          JSR     PRINT_ADDRESS
+00002F6E  43F9 0000337A           1575          LEA     TXT_OP_RTS,A1
+00002F74  4EB9 0000315C           1576          JSR     APPEND_STRING
+00002F7A  6000 F294               1577          BRA     LOOP_END
+00002F7E                          1578          
+00002F7E                          1579  OP_SUB
+00002F7E  4EB9 000030E4           1580          JSR     PRINT_ADDRESS
+00002F84  43F9 00003383           1581          LEA     TXT_OP_SUB,A1
+00002F8A  4EB9 0000315C           1582          JSR     APPEND_STRING
+00002F90  3A03                    1583          MOVE.W  D3,D5
+00002F92  0245 00C0               1584          ANDI.W  #$00C0,D5
+00002F96  4EB9 00003166           1585          JSR     PRINT_SIZE
+00002F9C                          1586          
+00002F9C  0803 0008               1587          BTST.L  #8,D3
+00002FA0  6700 0034               1588          BEQ     OP_SUB_TO
+00002FA4                          1589          
+00002FA4                          1590  OP_SUB_FROM
+00002FA4  3A03                    1591          MOVE.W  D3,D5
+00002FA6  0245 003F               1592          ANDI.W  #$003F,D5
+00002FAA  7C01                    1593          MOVE.L  #1,D6
+00002FAC  2E03                    1594          MOVE.L  D3,D7
+00002FAE  0247 00C0               1595          ANDI.W  #$00C0,D7
+00002FB2  EC4F                    1596          LSR.W   #6,D7
+00002FB4  4EB8 3600               1597          JSR     DUKE_EA_FUNCTION
+00002FB8                          1598          
+00002FB8  1AFC 002C               1599          MOVE.B  #',',(A5)+
+00002FBC  1AFC 0044               1600          MOVE.B  #'D',(A5)+
+00002FC0  3A03                    1601          MOVE.W  D3,D5
+00002FC2  0245 0E00               1602          ANDI.W  #$0E00,D5
+00002FC6  123C 0009               1603          MOVE.B  #9,D1
+00002FCA  E26D                    1604          LSR.W   D1,D5
+00002FCC  0645 0030               1605          ADD     #$30,D5
+00002FD0  1AC5                    1606          MOVE.B  D5,(A5)+
+00002FD2                          1607          
+00002FD2  6000 F23C               1608          BRA     LOOP_END
+00002FD6                          1609          
+00002FD6                          1610  OP_SUB_TO
+00002FD6  1AFC 0044               1611          MOVE.B  #'D',(A5)+
+00002FDA  3A03                    1612          MOVE.W  D3,D5
+00002FDC  0245 0E00               1613          ANDI.W  #$0E00,D5
+00002FE0  123C 0009               1614          MOVE.B  #9,D1
+00002FE4  E26D                    1615          LSR.W   D1,D5
+00002FE6  0645 0030               1616          ADD     #$30,D5
+00002FEA  1AC5                    1617          MOVE.B  D5,(A5)+
+00002FEC                          1618          
+00002FEC  1AFC 002C               1619          MOVE.B  #',',(A5)+
+00002FF0  3A03                    1620          MOVE.W  D3,D5
+00002FF2  0245 003F               1621          ANDI.W  #$003F,D5
+00002FF6  7C01                    1622          MOVE.L  #1,D6
+00002FF8  2E03                    1623          MOVE.L  D3,D7
+00002FFA  0247 00C0               1624          ANDI.W  #$00C0,D7
+00002FFE  EC4F                    1625          LSR.W   #6,D7
+00003000  4EB8 3600               1626          JSR     DUKE_EA_FUNCTION
+00003004                          1627          
+00003004  6000 F20A               1628          BRA     LOOP_END
+00003008                          1629          
+00003008                          1630  OP_SUBA
+00003008  4EB9 000030E4           1631          JSR     PRINT_ADDRESS
+0000300E  43F9 00003388           1632          LEA     TXT_OP_SUBA,A1
+00003014  4EB9 0000315C           1633          JSR     APPEND_STRING
+0000301A                          1634                  
+0000301A  0803 0008               1635          BTST.L  #8,D3
+0000301E  6600 000A               1636          BNE     OP_SUBA_L
+00003022                          1637          
+00003022                          1638  OP_SUBA_W
+00003022  1AFC 0057               1639          MOVE.B  #'W',(A5)+
+00003026  6000 0006               1640          BRA     OP_SUBA_END
+0000302A                          1641  
+0000302A                          1642  OP_SUBA_L
+0000302A  1AFC 004C               1643          MOVE.B  #'L',(A5)+
+0000302E                          1644          
+0000302E                          1645  OP_SUBA_END
+0000302E  1AFC 0020               1646          MOVE.B  #' ',(A5)+
+00003032  3A03                    1647          MOVE.W  D3,D5
+00003034  0245 003F               1648          ANDI.W  #$003F,D5
+00003038  7C01                    1649          MOVE.L  #1,D6
+0000303A  2E03                    1650          MOVE.L  D3,D7
+0000303C  0247 00C0               1651          ANDI.W  #$00C0,D7
+00003040  EC4F                    1652          LSR.W   #6,D7
+00003042  4EB8 3600               1653          JSR     DUKE_EA_FUNCTION
+00003046                          1654          
+00003046  1AFC 002C               1655          MOVE.B  #',',(A5)+
+0000304A  1AFC 0041               1656          MOVE.B  #'A',(A5)+
+0000304E  3A03                    1657          MOVE.W  D3,D5
+00003050  0245 0E00               1658          ANDI.W  #$0E00,D5
+00003054  123C 0009               1659          MOVE.B  #9,D1
+00003058  E26D                    1660          LSR.W   D1,D5
+0000305A  0645 0030               1661          ADD     #$30,D5
+0000305E  1AC5                    1662          MOVE.B  D5,(A5)+
+00003060                          1663          
+00003060  6000 F1AE               1664          BRA     LOOP_END
+00003064                          1665          
+00003064                          1666  OP_SUBI
+00003064  4EB9 000030E4           1667          JSR     PRINT_ADDRESS
+0000306A  43F9 0000338E           1668          LEA     TXT_OP_SUBI,A1
+00003070  4EB9 0000315C           1669          JSR     APPEND_STRING
+00003076  3A03                    1670          MOVE.W  D3,D5
+00003078  0245 00C0               1671          ANDI.W  #$00C0,D5
+0000307C  4EB9 00003166           1672          JSR     PRINT_SIZE
+00003082                          1673          
+00003082  1AFC 0023               1674          MOVE.B  #'#',(A5)+
+00003086  1AFC 0024               1675          MOVE.B  #'$',(A5)+
+0000308A                          1676          
+0000308A  0C45 0080               1677          CMPI.W  #$0080,D5
+0000308E  6700 0010               1678          BEQ     OP_SUBI_L
+00003092                          1679          
+00003092  301E                    1680          MOVE.W  (A6)+,D0
+00003094  4287                    1681          CLR.L   D7
+00003096  4EB9 00003138           1682          JSR     PRINT_HEX_WORD
+0000309C  6000 000C               1683          BRA     OP_SUBI_END
+000030A0                          1684          
+000030A0                          1685  OP_SUBI_L
+000030A0  201E                    1686          MOVE.L  (A6)+,D0
+000030A2  7E10                    1687          MOVE.L  #$10,D7
+000030A4  4EB9 0000314A           1688          JSR     PRINT_HEX_LONG
+000030AA                          1689          
+000030AA                          1690  OP_SUBI_END
+000030AA  1AFC 002C               1691          MOVE.B  #',',(A5)+
+000030AE  3A03                    1692          MOVE.W  D3,D5
+000030B0  0245 003F               1693          ANDI.W  #$003F,D5
+000030B4  7C01                    1694          MOVE.L  #1,D6
+000030B6  4EB8 3600               1695          JSR     DUKE_EA_FUNCTION
+000030BA                          1696          
+000030BA  6000 F154               1697          BRA     LOOP_END
+000030BE                          1698  
+000030BE                          1699  ;----------------------------------------------------------------------
+000030BE                          1700  ; Printing Functions
+000030BE                          1701  ;----------------------------------------------------------------------
+000030BE                          1702  ;--------------------------------------------------
+000030BE                          1703  ; Prints the Data, which is the current op-code.
+000030BE                          1704  ; The format is "XXXXXXXX DATA YYYY" where
+000030BE                          1705  ; XXXXXXXX is the address of this data, and YYYY
+000030BE                          1706  ; is the data.
+000030BE                          1707  ;--------------------------------------------------
+000030BE                          1708  BAD_INPUT
+000030BE  4EB9 000030E4           1709          JSR     PRINT_ADDRESS
+000030C4  43F9 0000323E           1710          LEA     TXT_DATA,A1
+000030CA  4EB9 0000315C           1711          JSR     APPEND_STRING
+000030D0                          1712          
+000030D0  3003                    1713          MOVE.W  D3,D0
+000030D2  4EB9 00003138           1714          JSR     PRINT_HEX_WORD
+000030D8                          1715          
+000030D8  0C07 00FF               1716          CMPI.B  #$FF,D7
+000030DC  6600 F132               1717          BNE     LOOP_END
+000030E0  6000 F136               1718          BRA     LOOP_END_2
+000030E4                          1719  
+000030E4                          1720  ;--------------------------------------------------
+000030E4                          1721  ; Print the literal address currently in A6, 
+000030E4                          1722  ; This should be the prevously read op-code, which
+000030E4                          1723  ; is the op-code currently being decoded.
+000030E4                          1724  ;--------------------------------------------------
+000030E4                          1725  PRINT_ADDRESS
+000030E4  48E7 E000               1726          MOVEM.L D0-D2,-(SP)
+000030E8                          1727          
+000030E8  200E                    1728          MOVE.L  A6,D0           ; Move op-code address to D0
+000030EA  5580                    1729          SUBI.L  #2,D0           ; Subtract 2 because pointer is to next op-code
+000030EC  4EB9 0000314A           1730          JSR     PRINT_HEX_LONG
+000030F2  1AFC 0020               1731          MOVE.B  #' ',(A5)+
+000030F6  1AFC 0020               1732          MOVE.B  #' ',(A5)+
+000030FA  1AFC 0020               1733          MOVE.B  #' ',(A5)+
+000030FE  1AFC 0020               1734          MOVE.B  #' ',(A5)+
+00003102                          1735          
+00003102  4CDF 0007               1736          MOVEM.L (SP)+,D0-D2
+00003106  4E75                    1737          RTS
+00003108                          1738          
+00003108                          1739  ;--------------------------------------------------
+00003108                          1740  ; Prints the byte hex digits in D0
+00003108                          1741  ; Specifically, the least significant 8 bits.
+00003108                          1742  ;--------------------------------------------------
+00003108                          1743  PRINT_HEX_BYTE
+00003108  48E7 E000               1744          MOVEM.L D0-D2,-(SP)
+0000310C                          1745          
+0000310C  4281                    1746          CLR.L   D1
+0000310E  7402                    1747          MOVE.L  #2,D2
+00003110                          1748          
+00003110                          1749  PRINT_HEX_BYTE_LOOP
+00003110  E918                    1750          ROL.B   #4,D0
+00003112  1200                    1751          MOVE.B  D0,D1
+00003114  0201 000F               1752          ANDI.B  #$0F,D1
+00003118  0C01 000A               1753          CMPI.B  #$0A,D1
+0000311C  6D00 0004               1754          BLT     PRINT_HEX_BYTE_DECIMAL
+00003120  5E01                    1755          ADDI.B  #$7,D1
+00003122                          1756          
+00003122                          1757  PRINT_HEX_BYTE_DECIMAL
+00003122  0601 0030               1758          ADDI.B  #$30,D1
+00003126  1AC1                    1759          MOVE.B  D1,(A5)+
+00003128  5302                    1760          SUBI.B  #1,D2
+0000312A  0C82 00000000           1761          CMPI.L  #0,D2
+00003130  66DE                    1762          BNE     PRINT_HEX_BYTE_LOOP
+00003132                          1763          
+00003132  4CDF 0007               1764          MOVEM.L (SP)+,D0-D2
+00003136  4E75                    1765          RTS
+00003138                          1766          
+00003138                          1767  ;--------------------------------------------------
+00003138                          1768  ; Prints the word hex digits in D0
+00003138                          1769  ; Specifically, the least significant 16 bits.
+00003138                          1770  ;--------------------------------------------------
+00003138                          1771  PRINT_HEX_WORD
+00003138  2F00                    1772          MOVE.L  D0,-(SP)
+0000313A                          1773          
+0000313A  E158                    1774          ROL.W   #8,D0
+0000313C  4EB8 3108               1775          JSR     PRINT_HEX_BYTE
+00003140  E158                    1776          ROL.W   #8,D0
+00003142  4EB8 3108               1777          JSR     PRINT_HEX_BYTE
+00003146                          1778          
+00003146  201F                    1779          MOVE.L  (SP)+,D0
+00003148  4E75                    1780          RTS
+0000314A                          1781          
+0000314A                          1782  ;--------------------------------------------------
+0000314A                          1783  ; Prints the word hex digits in D0
+0000314A                          1784  ; Specifically, the least significant 16 bits.
+0000314A                          1785  ;--------------------------------------------------
+0000314A                          1786  PRINT_HEX_LONG
+0000314A  2F00                    1787          MOVE.L  D0,-(SP)
+0000314C                          1788          
+0000314C  4840                    1789          SWAP    D0
+0000314E  4EB8 3138               1790          JSR     PRINT_HEX_WORD
+00003152  4840                    1791          SWAP    D0
+00003154  4EB8 3138               1792          JSR     PRINT_HEX_WORD
+00003158                          1793          
+00003158  201F                    1794          MOVE.L  (SP)+,D0
+0000315A  4E75                    1795          RTS
+0000315C                          1796  
+0000315C                          1797  ;--------------------------------------------------
+0000315C                          1798  ; Append the output buffer with the string starting
+0000315C                          1799  ; at A1. The string at A1 must end with 0 (null).
+0000315C                          1800  ;--------------------------------------------------
+0000315C                          1801  APPEND_STRING
+0000315C  1AD9                    1802          MOVE.B  (A1)+,(A5)+
+0000315E  0C11 0000               1803          CMP.B   #0,(A1)
+00003162  66F8                    1804          BNE     APPEND_STRING
+00003164                          1805          
+00003164  4E75                    1806          RTS
+00003166                          1807  
+00003166                          1808  ;--------------------------------------------------
+00003166                          1809  ; Prints the character B, W, or L depending on the
+00003166                          1810  ; value in D5.
+00003166                          1811  ; $0000 = B     $0040 = W   anything else = L
+00003166                          1812  ;--------------------------------------------------
+00003166                          1813  PRINT_SIZE
+00003166  0C45 0000               1814          CMPI.W  #$0000,D5
+0000316A  6700 000E               1815          BEQ     PRINT_SIZE_B
+0000316E  0C45 0040               1816          CMPI.W  #$0040,D5
+00003172  6700 000E               1817          BEQ     PRINT_SIZE_W
+00003176  6000 0012               1818          BRA     PRINT_SIZE_L
+0000317A                          1819  
+0000317A                          1820  PRINT_SIZE_B
+0000317A  1AFC 0042               1821          MOVE.B  #$42,(A5)+
+0000317E  6000 000E               1822          BRA     PRINT_SIZE_END
+00003182                          1823          
+00003182                          1824  PRINT_SIZE_W
+00003182  1AFC 0057               1825          MOVE.B  #$57,(A5)+
+00003186  6000 0006               1826          BRA     PRINT_SIZE_END
+0000318A                          1827  
+0000318A                          1828  PRINT_SIZE_L
+0000318A  1AFC 004C               1829          MOVE.B  #$4C,(A5)+
+0000318E                          1830  
+0000318E                          1831  PRINT_SIZE_END
+0000318E  1AFC 0020               1832          MOVE.B  #' ',(A5)+
+00003192  1AFC 0020               1833          MOVE.B  #' ',(A5)+
+00003196  1AFC 0020               1834          MOVE.B  #' ',(A5)+
+0000319A  4E75                    1835          RTS
+0000319C                          1836          
+0000319C                          1837  
+0000319C                          1838  
+0000319C                          1839  
+0000319C                          1840  PRINT_MOVEM_LIST_DECREMENT
+0000319C  48E7 E100               1841          MOVEM.L D0/D1/D2/D7,-(SP)
+000031A0  700F                    1842          MOVE.L  #15,D0
+000031A2  4281                    1843          CLR.L   D1
+000031A4  4282                    1844          CLR.L   D2
+000031A6  4287                    1845          CLR.L   D7
+000031A8  3E1E                    1846          MOVE.W  (A6)+,D7
+000031AA                          1847          
+000031AA                          1848  PRINT_MOVEM_D_LOOP
+000031AA  0107                    1849          BTST.L  D0,D7
+000031AC  6700 0030               1850          BEQ     PRINT_MOVEM_D_LOOP_CHECK
+000031B0                          1851          
+000031B0  0C01 0000               1852          CMPI.B  #0,D1
+000031B4  6700 0006               1853          BEQ     PRINT_MOVEM_D_LOOP_NOSLASH
+000031B8  1AFC 002F               1854          MOVE.B  #'/',(A5)+
+000031BC                          1855          
+000031BC                          1856  PRINT_MOVEM_D_LOOP_NOSLASH
+000031BC  0C00 0008               1857          CMPI.B  #8,D0
+000031C0  6D00 0010               1858          BLT     PRINT_MOVEM_D_PRINT_A
+000031C4                          1859          
+000031C4  1AFC 0044               1860          MOVE.B  #'D',(A5)+
+000031C8  1202                    1861          MOVE.B  D2,D1
+000031CA  0641 0030               1862          ADD     #$30,D1
+000031CE  6000 000C               1863          BRA     PRINT_MOVEM_D_LOOP_END
+000031D2                          1864          
+000031D2                          1865  PRINT_MOVEM_D_PRINT_A
+000031D2  1AFC 0041               1866          MOVE.B  #'A',(A5)+
+000031D6  1202                    1867          MOVE.B  D2,D1
+000031D8  0641 0028               1868          ADD     #$28,D1
+000031DC                          1869          
+000031DC                          1870  PRINT_MOVEM_D_LOOP_END
+000031DC  1AC1                    1871          MOVE.B  D1,(A5)+
+000031DE                          1872          
+000031DE                          1873  PRINT_MOVEM_D_LOOP_CHECK
+000031DE  5202                    1874          ADDQ.B  #1,D2
+000031E0  5300                    1875          SUBQ.B  #1,D0
+000031E2  0C00 0000               1876          CMPI.B  #0,D0
+000031E6  6CC2                    1877          BGE     PRINT_MOVEM_D_LOOP
+000031E8                          1878          
+000031E8  4CDF 0087               1879          MOVEM.L (SP)+,D0/D1/D2/D7
+000031EC  4E75                    1880          RTS
+000031EE                          1881          
+000031EE                          1882  
+000031EE                          1883  
+000031EE                          1884  PRINT_MOVEM_LIST_INCREMENT
+000031EE  48E7 C100               1885          MOVEM.L D0/D1/D7,-(SP)
+000031F2  4280                    1886          CLR.L   D0
+000031F4  4281                    1887          CLR.L   D1
+000031F6  4287                    1888          CLR.L   D7
+000031F8  3E1E                    1889          MOVE.W  (A6)+,D7
+000031FA                          1890          
+000031FA                          1891  PRINT_MOVEM_I_LOOP
+000031FA  0107                    1892          BTST.L  D0,D7
+000031FC  6700 0030               1893          BEQ     PRINT_MOVEM_I_LOOP_CHECK
+00003200                          1894          
+00003200  0C01 0000               1895          CMPI.B  #0,D1
+00003204  6700 0006               1896          BEQ     PRINT_MOVEM_I_LOOP_NOSLASH
+00003208  1AFC 002F               1897          MOVE.B  #'/',(A5)+
+0000320C                          1898          
+0000320C                          1899  PRINT_MOVEM_I_LOOP_NOSLASH
+0000320C  0C00 0008               1900          CMPI.B  #8,D0
+00003210  6C00 0010               1901          BGE     PRINT_MOVEM_I_PRINT_A
+00003214                          1902          
+00003214  1AFC 0044               1903          MOVE.B  #'D',(A5)+
+00003218  1200                    1904          MOVE.B  D0,D1
+0000321A  0641 0030               1905          ADD     #$30,D1
+0000321E  6000 000C               1906          BRA     PRINT_MOVEM_I_LOOP_END
+00003222                          1907          
+00003222                          1908  PRINT_MOVEM_I_PRINT_A
+00003222  1AFC 0041               1909          MOVE.B  #'A',(A5)+
+00003226  1200                    1910          MOVE.B  D0,D1
+00003228  0641 0028               1911          ADD     #$28,D1
+0000322C                          1912          
+0000322C                          1913  PRINT_MOVEM_I_LOOP_END
+0000322C  1AC1                    1914          MOVE.B  D1,(A5)+
+0000322E                          1915          
+0000322E                          1916  PRINT_MOVEM_I_LOOP_CHECK
+0000322E  5200                    1917          ADDQ.B  #1,D0
+00003230  0C00 000F               1918          CMPI.B  #15,D0
+00003234  6FC4                    1919          BLE     PRINT_MOVEM_I_LOOP
+00003236                          1920          
+00003236  4CDF 0083               1921          MOVEM.L (SP)+,D0/D1/D7
+0000323A  4E75                    1922          RTS
+0000323C                          1923          
+0000323C                          1924  ;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+0000323C                          1925  ; Appends the decoded EA to the output buffer.
+0000323C                          1926  ; Needs to call Duke's code instead!!!
+0000323C                          1927  ;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+0000323C                          1928  ; Temp function to Print EA information
+0000323C                          1929  DUKE_EA
+0000323C                          1930          
+0000323C                          1931  
+0000323C                          1932          
+0000323C                          1933  ;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+0000323C                          1934  ; End the function. Return to Mark particularly!
+0000323C                          1935  ;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+0000323C                          1936  Z_END
+0000323C                          1937          ;NOP
+0000323C  4E75                    1938          RTS
+0000323E                          1939          
+0000323E                          1940  
+0000323E                          1941  ;----------------------------------------------------------------------
+0000323E                          1942  ; End of memory variables and constants
+0000323E                          1943  ;----------------------------------------------------------------------
+0000323E= 44 41 54 41 20 20 ...   1944  TXT_DATA        DC.B    'DATA    ',0
+00003247= 41 44 44 2E 00          1945  TXT_OP_ADD      DC.B    'ADD.',0
+0000324C= 41 44 44 41 2E 00       1946  TXT_OP_ADDA     DC.B    'ADDA.',0
+00003252= 41 44 44 49 2E 00       1947  TXT_OP_ADDI     DC.B    'ADDI.',0
+00003258= 41 44 44 51 2E 00       1948  TXT_OP_ADDQ     DC.B    'ADDQ.',0
+0000325E= 41 4E 44 2E 00          1949  TXT_OP_AND      DC.B    'AND.',0
+00003263= 41 4E 44 49 2E 00       1950  TXT_OP_ANDI     DC.B    'ANDI.',0
+00003269= 41 53 4C 2E 00          1951  TXT_OP_ASL      DC.B    'ASL.',0
+0000326E= 41 53 52 2E 00          1952  TXT_OP_ASR      DC.B    'ASR.',0
+00003273= 41 53 4C 20 20 20 ...   1953  TXT_OP_ASL_EA   DC.B    'ASL     ',0
+0000327C= 41 53 52 20 20 20 ...   1954  TXT_OP_ASR_EA   DC.B    'ASR     ',0
+00003285= 42 43 43 20 20 20 ...   1955  TXT_OP_BCC      DC.B    'BCC     ',0
+0000328E= 42 47 54 20 20 20 ...   1956  TXT_OP_BGT      DC.B    'BGT     ',0
+00003297= 42 4C 45 20 20 20 ...   1957  TXT_OP_BLE      DC.B    'BLE     ',0
+000032A0= 42 53 52 20 20 20 ...   1958  TXT_OP_BSR      DC.B    'BSR     ',0
+000032A9= 42 56 53 20 20 20 ...   1959  TXT_OP_BVS      DC.B    'BVS     ',0
+000032B2= 42 43 48 47 20 20 ...   1960  TXT_OP_BCHG     DC.B    'BCHG    ',0
+000032BB= 43 4C 52 2E 00          1961  TXT_OP_CLR      DC.B    'CLR.',0
+000032C0= 43 4D 50 2E 00          1962  TXT_OP_CMP      DC.B    'CMP.',0
+000032C5= 43 4D 50 41 2E 57 ...   1963  TXT_OP_CMPAW    DC.B    'CMPA.W  ',0
+000032CE= 43 4D 50 41 2E 4C ...   1964  TXT_OP_CMPAL    DC.B    'CMPA.L  ',0
+000032D7= 43 4D 50 49 2E 00       1965  TXT_OP_CMPI     DC.B    'CMPI.',0
+000032DD= 44 56 53 2E 57 20 ...   1966  TXT_OP_DIVSW    DC.B    'DVS.W   ',0
+000032E6= 45 4F 52 2E 00          1967  TXT_OP_EOR      DC.B    'EOR.',0
+000032EB= 45 4F 52 49 2E 00       1968  TXT_OP_EORI     DC.B    'EORI.',0
+000032F1= 4A 53 52 20 20 20 ...   1969  TXT_OP_JSR      DC.B    'JSR     ',0
+000032FA= 4C 45 41 20 20 20 ...   1970  TXT_OP_LEA      DC.B    'LEA     ',0
+00003303= 4C 53 4C 2E 00          1971  TXT_OP_LSL      DC.B    'LSL.',0
+00003308= 4C 53 52 2E 00          1972  TXT_OP_LSR      DC.B    'LSR.',0
+0000330D= 4D 4F 56 45 2E 42 ...   1973  TXT_OP_MOVEB    DC.B    'MOVE.B  ',0
+00003316= 4D 4F 56 45 2E 4C ...   1974  TXT_OP_MOVEL    DC.B    'MOVE.L  ',0
+0000331F= 4D 4F 56 45 2E 57 ...   1975  TXT_OP_MOVEW    DC.B    'MOVE.W  ',0
+00003328= 4D 4F 56 45 41 2E ...   1976  TXT_OP_MOVEAB   DC.B    'MOVEA.B ',0
+00003331= 4D 4F 56 45 41 2E ...   1977  TXT_OP_MOVEAL   DC.B    'MOVEA.L ',0
+0000333A= 4D 4F 56 45 41 2E ...   1978  TXT_OP_MOVEAW   DC.B    'MOVEA.W ',0
+00003343= 4D 4F 56 45 4D 2E ...   1979  TXT_OP_MOVEMW   DC.B    'MOVEM.W ',0
+0000334C= 4D 4F 56 45 4D 2E ...   1980  TXT_OP_MOVEML   DC.B    'MOVEM.L ',0
+00003355= 4D 4F 56 45 51 2E ...   1981  TXT_OP_MOVEQ    DC.B    'MOVEQ.L ',0
+0000335E= 4D 55 4C 53 2E 57 ...   1982  TXT_OP_MULS     DC.B    'MULS.W  ',0
+00003367= 4E 4F 50 20 20 20 ...   1983  TXT_OP_NOP      DC.B    'NOP     ',0
+00003370= 52 4F 4C 2E 00          1984  TXT_OP_ROL      DC.B    'ROL.',0
+00003375= 52 4F 52 2E 00          1985  TXT_OP_ROR      DC.B    'ROR.',0
+0000337A= 52 54 53 20 20 20 ...   1986  TXT_OP_RTS      DC.B    'RTS     ',0
+00003383= 53 55 42 2E 00          1987  TXT_OP_SUB      DC.B    'SUB.',0
+00003388= 53 55 42 41 2E 00       1988  TXT_OP_SUBA     DC.B    'SUBA.',0
+0000338E= 53 55 42 49 2E 00       1989  TXT_OP_SUBI     DC.B    'SUBI.',0
+00003394= 28 50 72 65 73 73 ...   1990  TXT_QUERY       DC.B    '(Press Enter to continue)',0
+000033AE= 58 58 58 58 58 58 00    1991  TXT_DEFAULT_EA  DC.B    'XXXXXX',0
+000033B5= 00                      1992  STRING_PTR      DC.B    0
+000033B6                          1993      ;END    START        ; last line of source
+000033B6                          1994  
+000033B6                          1995  
+000033B6                          1996  
+000033B6                          1997  
+000033B6                          1998  
+000033B6                          1999  
+000033B6                          2000  
+000033B6                          2001  
+000033B6                          2002  
+000033B6                          2003  
+000033B6                          2004  
+000033B6                          2005  
+000033B6                          2006  
+000033B6                          2007  
+000033B6                          2008  
+000033B6                          2009  
+000033B6                          2010  
+000033B6                          2011  
+Line 2012 WARNING: END directive missing, starting address not set
+
+No errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+APPEND_STRING       315C
+BAD_INPUT           30BE
+BEGIN               7000
+DUKE_EA             323C
+DUKE_EA_FUNCTION    3600
+END                 7100
+LOOP                2016
+LOOP_END            2210
+LOOP_END_2          2218
+LOOP_END_BAD_INPUT  2240
+OP_ADD              2262
+OP_ADDA             22E8
+OP_ADDAW            231A
+OP_ADDA_END         2320
+OP_ADDI             2350
+OP_ADDI_B           239E
+OP_ADDI_END         23BC
+OP_ADDI_L           23B2
+OP_ADDI_W           23A8
+OP_ADDQ             23D0
+OP_ADD_DEST         22BC
+OP_ADD_SOURCE       2290
+OP_AND              242A
+OP_ANDI             24B0
+OP_ANDI_B           251A
+OP_ANDI_END         2522
+OP_ANDI_L           2504
+OP_ANDI_W           2510
+OP_AND_DEST         248C
+OP_AND_SOURCE       2468
+OP_ASD_D            2536
+OP_ASD_D_END        2558
+OP_ASD_EA           25FA
+OP_ASD_EA_END       261C
+OP_ASD_I            2598
+OP_ASD_I_END        25BA
+OP_ASL_D            2548
+OP_ASL_EA           260C
+OP_ASL_I            25AA
+OP_ASR_D            2552
+OP_ASR_EA           2616
+OP_ASR_I            25B4
+OP_BCC              2634
+OP_BCC_2BYTE_DISPLACE  2664
+OP_BCC_4BYTE_DISPLACE  266A
+OP_BCC_COMMON       2646
+OP_BCC_END          266C
+OP_BCHG             26B4
+OP_BCHGI            2700
+OP_BGT              2678
+OP_BLE              268C
+OP_BSR              2746
+OP_BVS              26A0
+OP_CLR              275C
+OP_CMP              27A2
+OP_CMPA             27F2
+OP_CMPA_END         281E
+OP_CMPA_L           2818
+OP_CMPA_W           280E
+OP_CMPI             2850
+OP_CMPI_END         28A4
+OP_CMPI_L           289A
+OP_DIVSW            28B8
+OP_EOR              2904
+OP_EORI             2964
+OP_EORI_END         29BE
+OP_EORI_L           29B6
+OP_ID_0             2092
+OP_ID_1             20CC
+OP_ID_2             20D0
+OP_ID_3             20E2
+OP_ID_4             20F4
+OP_ID_5             213E
+OP_ID_6             2142
+OP_ID_7             216C
+OP_ID_8             2170
+OP_ID_9             2174
+OP_ID_B             2186
+OP_ID_C             21A0
+OP_ID_D             21B2
+OP_ID_E             21C4
+OP_ID_E_PART2       2204
+OP_JSR              29D2
+OP_LEA              2A04
+OP_LSD_D            2A54
+OP_LSD_D_END        2A72
+OP_LSD_EA           2B12
+OP_LSD_EA_END       2B30
+OP_LSD_I            2AB4
+OP_LSD_I_END        2AD2
+OP_LSR_D            2A6C
+OP_LSR_EA           2B2A
+OP_LSR_I            2ACC
+OP_MOVEAB           2B50
+OP_MOVEAL           2B8E
+OP_MOVEAW           2BCC
+OP_MOVEB            2C0A
+OP_MOVEL            2C54
+OP_MOVEML_FROM      2D24
+OP_MOVEML_FROM_DECREMENT  2D56
+OP_MOVEML_FROM_REGULAR  2D5E
+OP_MOVEML_TO        2DBE
+OP_MOVEMW_FROM      2CCC
+OP_MOVEMW_FROM_DECREMENT  2CFE
+OP_MOVEMW_FROM_REGULAR  2D08
+OP_MOVEMW_TO        2D66
+OP_MOVEMW_TO_DECREMENT  2DAA
+OP_MOVEMW_TO_REGULAR  2DB4
+OP_MOVEM_FROM_END   2D0E
+OP_MOVEM_TO_END     2DBA
+OP_MOVEQ            2DFE
+OP_MOVEW            2C90
+OP_MULS             2E4C
+OP_NOP              2E8A
+OP_ROD_D            2EA0
+OP_ROD_D_END        2EBE
+OP_ROD_I            2F00
+OP_ROD_I_END        2F1E
+OP_ROR_D            2EB8
+OP_ROR_I            2F18
+OP_RTS              2F5E
+OP_SUB              2F7E
+OP_SUBA             3008
+OP_SUBA_END         302E
+OP_SUBA_L           302A
+OP_SUBA_W           3022
+OP_SUBI             3064
+OP_SUBI_END         30AA
+OP_SUBI_L           30A0
+OP_SUB_FROM         2FA4
+OP_SUB_TO           2FD6
+PRINT_ADDRESS       30E4
+PRINT_HEX_BYTE      3108
+PRINT_HEX_BYTE_DECIMAL  3122
+PRINT_HEX_BYTE_LOOP  3110
+PRINT_HEX_LONG      314A
+PRINT_HEX_WORD      3138
+PRINT_MOVEM_D_LOOP  31AA
+PRINT_MOVEM_D_LOOP_CHECK  31DE
+PRINT_MOVEM_D_LOOP_END  31DC
+PRINT_MOVEM_D_LOOP_NOSLASH  31BC
+PRINT_MOVEM_D_PRINT_A  31D2
+PRINT_MOVEM_I_LOOP  31FA
+PRINT_MOVEM_I_LOOP_CHECK  322E
+PRINT_MOVEM_I_LOOP_END  322C
+PRINT_MOVEM_I_LOOP_NOSLASH  320C
+PRINT_MOVEM_I_PRINT_A  3222
+PRINT_MOVEM_LIST_DECREMENT  319C
+PRINT_MOVEM_LIST_INCREMENT  31EE
+PRINT_SIZE          3166
+PRINT_SIZE_B        317A
+PRINT_SIZE_END      318E
+PRINT_SIZE_L        318A
+PRINT_SIZE_W        3182
+QUERY_CONTINUE      224A
+STRING_PTR          33B5
+TXT_DATA            323E
+TXT_DEFAULT_EA      33AE
+TXT_OP_ADD          3247
+TXT_OP_ADDA         324C
+TXT_OP_ADDI         3252
+TXT_OP_ADDQ         3258
+TXT_OP_AND          325E
+TXT_OP_ANDI         3263
+TXT_OP_ASL          3269
+TXT_OP_ASL_EA       3273
+TXT_OP_ASR          326E
+TXT_OP_ASR_EA       327C
+TXT_OP_BCC          3285
+TXT_OP_BCHG         32B2
+TXT_OP_BGT          328E
+TXT_OP_BLE          3297
+TXT_OP_BSR          32A0
+TXT_OP_BVS          32A9
+TXT_OP_CLR          32BB
+TXT_OP_CMP          32C0
+TXT_OP_CMPAL        32CE
+TXT_OP_CMPAW        32C5
+TXT_OP_CMPI         32D7
+TXT_OP_DIVSW        32DD
+TXT_OP_EOR          32E6
+TXT_OP_EORI         32EB
+TXT_OP_JSR          32F1
+TXT_OP_LEA          32FA
+TXT_OP_LSL          3303
+TXT_OP_LSR          3308
+TXT_OP_MOVEAB       3328
+TXT_OP_MOVEAL       3331
+TXT_OP_MOVEAW       333A
+TXT_OP_MOVEB        330D
+TXT_OP_MOVEL        3316
+TXT_OP_MOVEML       334C
+TXT_OP_MOVEMW       3343
+TXT_OP_MOVEQ        3355
+TXT_OP_MOVEW        331F
+TXT_OP_MULS         335E
+TXT_OP_NOP          3367
+TXT_OP_ROL          3370
+TXT_OP_ROR          3375
+TXT_OP_RTS          337A
+TXT_OP_SUB          3383
+TXT_OP_SUBA         3388
+TXT_OP_SUBI         338E
+TXT_QUERY           3394
+ZZZZZZZ_END         709E
+Z_END               323C

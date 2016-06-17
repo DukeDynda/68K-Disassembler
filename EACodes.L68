@@ -1,0 +1,289 @@
+00000000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.15.04
+Created On: 3/16/2016 11:19:16 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      : 68K Disassembler (Team project)
+00000000                             3  * Written by : Duke Dynda
+00000000                             4  * Date       : 02/13/2016
+00000000                             5  * Description: Effective Addressing part of 68K Disassembler
+00000000                             6  *              (OpCode = Anthony, I/O = Mark, EA = Duke)
+00000000                             7  *-----------------------------------------------------------
+00003400                             8              ORG         $3400
+00003400                             9  ************************************************************
+00003400                            10  *                     HELPER FUNCTIONS                     *
+00003400                            11  ************************************************************
+00003400                            12  SETPREV
+00003400  48E7 FE00                 13              MOVEM.L     D0-D6,-(SP)     Save data to stack so not to affect I/O or OpCode:
+00003404  6000 01FE                 14              BRA         HEXTOOCT        at beginning of program
+00003408                            15  GETPREV
+00003408  4CDF 007F                 16              MOVEM.L     (SP)+,D0-D6     Get data from stack for original datas:
+0000340C  6000 0354                 17              BRA         DONE            at end of program
+00003410                            18  
+00003410                            19  LONGTOASCII
+00003410  2016                      20              MOVE.L      (A6),D0         Move data to temporary data register as Long
+00003412  163C 0000                 21              MOVE.B      #0,D3           Let HEXTOASCII know if 0 = Long or 1 = Word
+00003416  4EB9 0000342C             22              JSR         HEXTOASCII      Convert Hex to ASCII
+0000341C  4E75                      23              RTS
+0000341E                            24  WORDTOASCII
+0000341E  3016                      25              MOVE.W      (A6),D0         Move data to temporary data register as Word
+00003420  163C 0001                 26              MOVE.B      #1,D3
+00003424  4EB9 0000342C             27              JSR         HEXTOASCII
+0000342A  4E75                      28              RTS
+0000342C                            29  HEXTOASCII
+0000342C  E998                      30              ROL.L       #4,D0           Rotate to analyze LSB one by one
+0000342E  2200                      31              MOVE.L      D0,D1           Temporary data register
+00003430  143C 0008                 32              MOVE.B      #8,D2           Counter
+00003434  0281 0000000F             33  STOREHEX    ANDI.L      #$0000000F,D1   Only get last bit of Long
+0000343A  0C01 000A                 34              CMPI.B      #$0A,D1         Make sure its not already ASCII
+0000343E  6D00 0004                 35              BLT         STOREDEC        Store the decimal
+00003442  5E01                      36              ADDI.B      #$7,D1          Add 7 if its a letter
+00003444  0601 0030                 37  STOREDEC    ADDI.B      #$30,D1         Convert to ASCII
+00003448  B63C 0001                 38              CMP.B       #1,D3           Check if Word or Long
+0000344C  6700 0006                 39              BEQ         CHECKCOUNT      If its a Word then check Counter
+00003450  6600 000A                 40              BNE         DOPRINT         For Word we only want to print first 4 ASCII
+00003454  B43C 0005                 41  CHECKCOUNT  CMP.B       #5,D2           Only print first 4 ASCII (ignore leading 0's)
+00003458  6C00 0004                 42              BGE         DONTPRINT       Don't print Word's leading 0's
+0000345C  1AC1                      43  DOPRINT     MOVE.B      D1,(A5)+        Print into buffer
+0000345E  E998                      44  DONTPRINT   ROL.L       #4,D0           Next number
+00003460  2200                      45              MOVE.L      D0,D1           Move into temporary data register
+00003462  5302                      46              SUBI.B      #1,D2           Decrement Counter
+00003464  0C82 00000000             47              CMPI.L      #0,D2           Exit if all 8 bytes checked
+0000346A  66C8                      48              BNE         STOREHEX        Otherwise continue
+0000346C  4E75                      49              RTS
+0000346E                            50              
+00003600                            51              ORG         $3600
+00003600                            52  ;START:                                  ; first instruction of program
+00003600                            53  
+00003600                            54  ****************** Testing example for EA ******************     ------------------- TESTING
+00003600                            55              ;MOVE.W      #$27,D5         EA dest or src hex i will receive
+00003600                            56              ;MOVE.B      #$0,D6          1 = source, 0 = destination
+00003600                            57              ;MOVE.B      #$01,D7         Op size (for immediate data) 10 = Long 01 = Word
+00003600                            58              ;LEA         $0020,A6        Data pointer, earliest space to start A6 for me
+00003600                            59              ;MOVE.L      #$A2B4C6D8,(A6) Data that I will receive
+00003600                            60  **** Bits for EA destination or source ex: 3C = 111 100 ****     ------------------- TESTING
+00003600                            61  
+00003600                            62  ************************* EA Begin *************************
+00003600                            63  ************************************************************
+00003600                            64  * Assumptions:                                             *
+00003600                            65  * Before program start:                                    *
+00003600                            66  *   A4 = End Address                                       *
+00003600                            67  *   A5 = Good Buffer                                       *
+00003600                            68  *   A6 = Data Pointer (Start) (for EA data)                *
+00003600                            69  *   A7 = Stack                                             *
+00003600                            70  *   D5 = Effective Address (hex) (source or destination)   *
+00003600                            71  *   D6 = Source or destination boolean (0 = dest, 1 = src) *
+00003600                            72  *   D7 = OpSize (data size either 01 = Word or 10 = Long)  *
+00003600                            73  * During program:                                          *
+00003600                            74  *   D4 = EA Register                                       *
+00003600                            75  *   D5 = Temporary storage                                 *
+00003600                            76  *   D6 = EA Mode                                           *
+00003600                            77  *   Error checking done during compilation of .L file      *
+00003600                            78  *   ASCII FF stored in buffer is bad operation (for mark)  *
+00003600                            79  ************************************************************
+00003600                            80  
+00003600                            81  ************************************************************
+00003600                            82  * Converts hexadecimal EA to Octal EA 3 bit mode/ register *
+00003600                            83  ************************************************************
+00003600  6000 FDFE                 84              BRA         SETPREV         Set original data in stack so its not affected
+00003604                            85  HEXTOOCT
+00003604  BC3C 0000                 86              CMP.B       #$0,D6          Check to see if destination EA
+00003608  6700 000E                 87              BEQ         DESTINATION     Convert dest EA to octal mode and register
+0000360C  BC3C 0001                 88              CMP.B       #$1,D6          Check to see if source EA
+00003610  6700 0016                 89              BEQ         SOURCE          Convert src EA to octal mode and register:
+00003614  6000 013C                 90              BRA         ERROR           else throw an error, can only be 0 or 1
+00003618                            91              
+00003618                            92  DESTINATION
+00003618                            93  *** Converts EA Destination Register bits (middle 3 bits) **
+00003618  1805                      94              MOVE.B      D5,D4           Prepare to get 3 dest register bits
+0000361A  E50C                      95              LSL.B       #2,D4           Shift 2 bits left for MSB
+0000361C  EA0C                      96              LSR.B       #5,D4           Shift 5 bits right for LSB thus EA dest reg saved
+0000361E                            97  ************ Register complete (register saved) ************
+0000361E                            98  
+0000361E                            99  ****** Converts EA Destination Mode bits (last 3 bits) *****
+0000361E  1C05                     100              MOVE.B      D5,D6           Prepare to get 3 dest mode bits
+00003620  EB0E                     101              LSL.B       #5,D6           Shift 5 bits left for MSB
+00003622  EA0E                     102              LSR.B       #5,D6           Shift 5 bits right for LSB thus EA dest mode saved
+00003624                           103  *** Mode complete (mode # saved) next get addressing mode **
+00003624  6000 000E                104              BRA         MODETAB         Next work on address mode using mode table
+00003628                           105  
+00003628                           106  SOURCE
+00003628                           107  ******* Converts EA Source Mode bits (middle 3 bits) *******
+00003628  1C05                     108              MOVE.B      D5,D6           Prepare to get 3 src mode bits
+0000362A  E50E                     109              LSL.B       #2,D6           Shift 2 bits left for MSB
+0000362C  EA0E                     110              LSR.B       #5,D6           Shift 5 bits right for LSB thus EA src mode saved
+0000362E                           111  *************** Mode complete (mode # saved) ***************
+0000362E                           112  
+0000362E                           113  ****** Converst EA Source Register bits (last 3 bits) ******
+0000362E  1805                     114              MOVE.B      D5,D4           Prepare to get 3 src register bits
+00003630  EB0C                     115              LSL.B       #5,D4           Shift 5 bits left for MSB
+00003632  EA0C                     116              LSR.B       #5,D4           Shift 5 bits right for LSB thus EA dest reg saved
+00003634                           117  *Register complete (register # saved) next get address mode*
+00003634                           118  
+00003634                           119  ************************************************************
+00003634                           120  * EA Mode Table (retrieve EA addressing mode)              *
+00003634                           121  ************************************************************
+00003634                           122  MODETAB
+00003634                           123  *** Mode table error checking before branching to execute **
+00003634  BC3C 0000                124              CMP.B       #0,D6           Invalid mode error (# < 0)
+00003638  6D00 0118                125              BLT         ERROR
+0000363C  BC3C 0005                126              CMP.B       #5,D6           Invalid mode error since modes 5 & 6:
+00003640  6700 0110                127              BEQ         ERROR           are not used in this project
+00003644  BC3C 0006                128              CMP.B       #6,D6
+00003648  6700 0108                129              BEQ         ERROR
+0000364C  BC3C 0007                130              CMP.B       #7,D6           Invalid mode error (# > 7)
+00003650  6E00 0100                131              BGT         ERROR
+00003654                           132  ** Mode table to branch, convert addressing mode to ASCII **
+00003654  BC3C 0000                133              CMP.B       #0,D6           See if EA mode is Dn
+00003658  6700 002A                134              BEQ         DNMODE          Store Dn                    ;Dn Mode
+0000365C  BC3C 0001                135              CMP.B       #1,D6           See if EA mode is An
+00003660  6700 0030                136              BEQ         ANMODE          Store An                    ;An Mode
+00003664  BC3C 0002                137              CMP.B       #2,D6           See if EA mode is (An)
+00003668  6700 0036                138              BEQ         ANPMODE         Store (An)                  ;An Pointer Mode
+0000366C  BC3C 0003                139              CMP.B       #3,D6           See if EA mode is (An)+
+00003670  6700 0044                140              BEQ         ANPPMODE        Store (An)+                 ;An Pointer Plus Mode
+00003674  BC3C 0004                141              CMP.B       #4,D6           See if EA mode is -(An)
+00003678  6700 0056                142              BEQ         ANPMMODE        Store -(An)                 ;An Pointer Minus Mode
+0000367C  BC3C 0007                143              CMP.B       #7,D6           See if EA mode is (xxx).W, (xxx).L, or #<data>
+00003680  6700 0068                144              BEQ         DATAMODE        Complete checks then store  ;Data modes
+00003684                           145  
+00003684                           146  ************************************************************
+00003684                           147  * EA Mode branch executions (code to store ASCII EA)       *
+00003684                           148  ************************************************************
+00003684                           149  DNMODE
+00003684  1AFC 0044                150              MOVE.B      #'D',(A5)+      Store Dn addressing mode
+00003688  0604 0030                151              ADD.B       #48,D4          Convert register # to ASCII
+0000368C  1AC4                     152              MOVE.B      D4,(A5)+        Store register # for formatting
+0000368E  6000 00CE                153              BRA         COMPLETE        EA complete so ending EA
+00003692                           154  ANMODE
+00003692  1AFC 0041                155              MOVE.B      #'A',(A5)+      Store An addressing mode
+00003696  0604 0030                156              ADD.B       #48,D4
+0000369A  1AC4                     157              MOVE.B      D4,(A5)+
+0000369C  6000 00C0                158              BRA         COMPLETE
+000036A0                           159  ANPMODE
+000036A0  1AFC 0028                160              MOVE.B      #'(',(A5)+      Store (An) addressing mode:
+000036A4  1AFC 0041                161              MOVE.B      #'A',(A5)+      can store in succession for formatting
+000036A8  0604 0030                162              ADD.B       #48,D4
+000036AC  1AC4                     163              MOVE.B      D4,(A5)+
+000036AE  1AFC 0029                164              MOVE.B      #')',(A5)+
+000036B2  6000 00AA                165              BRA         COMPLETE
+000036B6                           166  ANPPMODE
+000036B6  1AFC 0028                167              MOVE.B      #'(',(A5)+      Store (An)+ addressing mode
+000036BA  1AFC 0041                168              MOVE.B      #'A',(A5)+
+000036BE  0604 0030                169              ADD.B       #48,D4
+000036C2  1AC4                     170              MOVE.B      D4,(A5)+
+000036C4  1AFC 0029                171              MOVE.B      #')',(A5)+
+000036C8  1AFC 002B                172              MOVE.B      #'+',(A5)+
+000036CC  6000 0090                173              BRA         COMPLETE
+000036D0                           174  ANPMMODE
+000036D0  1AFC 002D                175              MOVE.B      #'-',(A5)+      Store -(An) addressing mode
+000036D4  1AFC 0028                176              MOVE.B      #'(',(A5)+
+000036D8  1AFC 0041                177              MOVE.B      #'A',(A5)+
+000036DC  0604 0030                178              ADD.B       #48,D4
+000036E0  1AC4                     179              MOVE.B      D4,(A5)+
+000036E2  1AFC 0029                180              MOVE.B      #')',(A5)+
+000036E6  6000 0076                181              BRA         COMPLETE
+000036EA                           182  ****** EA mode 111, check register for addressing mode *****
+000036EA                           183  *** Register 000 = (xxx).W, 001 = (xxx).L, 100 = #<data> ***
+000036EA                           184  DATAMODE
+000036EA  B83C 0000                185              CMP.B       #0,D4           Branch to correct register # to convert to ASCII
+000036EE  6700 0022                186              BEQ         ZEROMODE        Register 0 thus a Word data
+000036F2  B83C 0001                187              CMP.B       #1,D4           Register 1 thus a Long data
+000036F6  6700 0028                188              BEQ         ONEMODE
+000036FA  B83C 0004                189              CMP.B       #4,D4           Register 4 thus a #<data> (determined by OpSize)
+000036FE  6700 002E                190              BEQ         FOURMODE
+00003702  B83C 0002                191              CMP.B       #2,D4           Register 2 thus not used in project thus ERROR
+00003706  6700 004A                192              BEQ         ERROR
+0000370A  B83C 0003                193              CMP.B       #3,D4           Register 3 thus not used in project thus ERROR
+0000370E  6700 0042                194              BEQ         ERROR
+00003712                           195              
+00003712  1AFC 0024                196  ZEROMODE    MOVE.B      #'$',(A5)+
+00003716  4EB8 341E                197              JSR         WORDTOASCII     Convert Word data to ASCII and store
+0000371A  3A1E                     198              MOVE.W      (A6)+,D5        Get ready for next data
+0000371C  6000 0040                199              BRA         COMPLETE
+00003720  1AFC 0024                200  ONEMODE     MOVE.B      #'$',(A5)+
+00003724  4EB8 3410                201              JSR         LONGTOASCII     Convert Long data to ASCII and store
+00003728  2A1E                     202              MOVE.L      (A6)+,D5
+0000372A  6000 0032                203              BRA         COMPLETE
+0000372E  1AFC 0023                204  FOURMODE    MOVE.B      #'#',(A5)+      #<data> mode, must be hex:
+00003732  1AFC 0024                205              MOVE.B      #'$',(A5)+      thus signify by #$<data>
+00003736  BE3C 0010                206              CMP.B       #$10,D7         10 = Long
+0000373A  6700 000C                207              BEQ         FOURMODELNG     BNE must therfore be a Word
+0000373E                           208  FOURMODEWRD
+0000373E  4EB8 341E                209              JSR         WORDTOASCII     #$<data> is a Word (01)
+00003742  3A1E                     210              MOVE.W      (A6)+,D5        Get ready for next data (useless operation)
+00003744  6000 0018                211              BRA         COMPLETE
+00003748                           212  FOURMODELNG
+00003748  4EB8 3410                213              JSR         LONGTOASCII     #$<data> is a Long (10)
+0000374C  2A1E                     214              MOVE.L      (A6)+,D5
+0000374E  6000 000E                215              BRA         COMPLETE
+00003752                           216              
+00003752                           217  ************************************************************
+00003752                           218  * EA Error Handling                                        *
+00003752                           219  ************************************************************
+00003752                           220  ERROR
+00003752                           221              *LEA         DISPERROR,A1    Display general error
+00003752                           222              *MOVE.B      #14,D0
+00003752                           223              *TRAP        #15
+00003752  1E38 0046                224              MOVE.B      'F',D7          Store FF meaning there has been an error:
+00003756  1E38 0046                225              MOVE.B      'F',D7          since FF is default in memory GIVE TO OPCODE (ANTHONY)
+0000375A  6000 0002                226              BRA         COMPLETE        EA complete so finishing with EA
+0000375E                           227              
+0000375E                           228  COMPLETE
+0000375E  6000 FCA8                229              BRA         GETPREV         Sets original datas to data registers
+00003762                           230  DONE
+00003762                           231  *************************** EA End *************************
+00003762                           232              *simhalt                                                         ------- TESTING
+00003762  4E75                     233              RTS                         Returns to OpCode part of DisAssembler (Anthony)
+00003764                           234  
+00003764  =0000000D                235  CR          EQU         $0D
+00003764  =0000000A                236  LF          EQU         $0A
+00003764= 47 45 4E 45 52 41 ...    237  DISPERROR   DC.B        'GENERAL EA ERROR',CR,LF,0
+00003777                           238  
+00003777                           239              ;END         START           ; last line of source
+00003777                           240  
+00003777                           241  
+00003777                           242  
+00003777                           243  
+00003777                           244  
+00003777                           245  
+Line 246 WARNING: END directive missing, starting address not set
+
+No errors detected
+1 warning generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ANMODE              3692
+ANPMMODE            36D0
+ANPMODE             36A0
+ANPPMODE            36B6
+CHECKCOUNT          3454
+COMPLETE            375E
+CR                  D
+DATAMODE            36EA
+DESTINATION         3618
+DISPERROR           3764
+DNMODE              3684
+DONE                3762
+DONTPRINT           345E
+DOPRINT             345C
+ERROR               3752
+FOURMODE            372E
+FOURMODELNG         3748
+FOURMODEWRD         373E
+GETPREV             3408
+HEXTOASCII          342C
+HEXTOOCT            3604
+LF                  A
+LONGTOASCII         3410
+MODETAB             3634
+ONEMODE             3720
+SETPREV             3400
+SOURCE              3628
+STOREDEC            3444
+STOREHEX            3434
+WORDTOASCII         341E
+ZEROMODE            3712
